@@ -23,7 +23,7 @@ public class Item {
 	@NotNull
 	private long price;
 	private long count;
-	private boolean active;
+	private Boolean active;
 	private String description;
 	
 	public long getId() {
@@ -56,7 +56,7 @@ public class Item {
 	public void setCount(long count) {
 		this.count = count;
 	}
-	public boolean isActive() {
+	public Boolean isActive() {
 		return active;
 	}
 	public void setActive(boolean active) {

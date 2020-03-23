@@ -13,7 +13,8 @@ public class Category {
 	@Column(name = "CategoryID", unique = true, nullable = false)
 	private long id;
 	private String name;
-	private boolean isActive;
+	@Column(name = "IsActive")
+	private Boolean isActive;
 	
 
 	public long getId() {
@@ -31,7 +32,7 @@ public class Category {
 		}
 		this.name = name;
 	}
-	public boolean isActive() {
+	public Boolean isActive() {
 		return isActive;
 	}
 	public void setActive(boolean isActive) {

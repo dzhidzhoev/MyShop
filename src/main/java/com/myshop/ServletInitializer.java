@@ -1,4 +1,4 @@
-package com.myshop.store;
+package com.myshop;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

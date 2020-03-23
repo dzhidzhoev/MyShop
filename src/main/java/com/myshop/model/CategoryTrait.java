@@ -1,19 +1,48 @@
 package com.myshop.model;
 
+import java.io.Serializable;
+
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 
 @Entity
 public class CategoryTrait {
-	@Id
+	@Embeddable
+	public static class ID implements Serializable {
+
+		private static final long serialVersionUID = 4684456376077857230L;
+		
+		private long categoryID, traitID;
+
+		public long getCategoryID() {
+			return categoryID;
+		}
+
+		public void setCategoryID(long categoryID) {
+			this.categoryID = categoryID;
+		}
+
+		public long getTraitID() {
+			return traitID;
+		}
+
+		public void setTraitID(long traitID) {
+			this.traitID = traitID;
+		}
+		
+	}
+	
+	@EmbeddedId private ID id; 
+	
 	@ManyToOne
-	@JoinColumn(name = "CategoryID")
+	@MapsId("categoryID")
 	private Category category;
-	@Id
+	
 	@ManyToOne
-	@JoinColumn(name = "TraitID")
+	@MapsId("traitID")
 	private Trait trait;
 	public Category getCategory() {
 		return category;

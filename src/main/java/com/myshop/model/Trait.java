@@ -9,7 +9,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import com.vladmihalcea.hibernate.type.array.ListArrayType;
+
 @Entity
+@TypeDef(name = "list-array",
+		typeClass = ListArrayType.class)
 public class Trait {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -17,10 +24,12 @@ public class Trait {
 	private long id;
 	@NotNull
 	private String name;
-	private boolean isSearchable;
+	private Boolean isSearchable;
 	@NotNull
 	private TypeEnum type;
 	private int minValue, maxValue;
+	@Type(type = "list-array")
+	@Column(name = "Values", columnDefinition = "string[]")
 	private List<String> values;
 	private String unit;
 	
@@ -36,7 +45,7 @@ public class Trait {
 	public void setType(TypeEnum type) {
 		this.type = type;
 	}
-	public boolean isSearchable() {
+	public Boolean isSearchable() {
 		return isSearchable;
 	}
 	public void setSearchable(boolean isSearchable) {

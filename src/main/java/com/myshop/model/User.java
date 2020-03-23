@@ -1,10 +1,12 @@
 package com.myshop.model;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+@Entity
 public class User {
 	@Id
 	@Column(name = "UserID", nullable = false, unique = true)
@@ -16,7 +18,7 @@ public class User {
 	private String pwdHash;
 	private String emailToken;
 	private String pwdChangeToken;
-	private boolean isAdmin, isDeleted;
+	private Boolean isAdmin, isDeleted;
 	private String firstName, lastName, middleName;
 	private String phone, address;
 	
@@ -50,13 +52,13 @@ public class User {
 	public void setPwdChangeToken(String pwdChangeToken) {
 		this.pwdChangeToken = pwdChangeToken;
 	}
-	public boolean isAdmin() {
+	public Boolean isAdmin() {
 		return isAdmin;
 	}
 	public void setAdmin(boolean isAdmin) {
 		this.isAdmin = isAdmin;
 	}
-	public boolean isDeleted() {
+	public Boolean isDeleted() {
 		return isDeleted;
 	}
 	public void setDeleted(boolean isDeleted) {
