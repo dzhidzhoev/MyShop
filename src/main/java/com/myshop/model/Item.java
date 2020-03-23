@@ -14,22 +14,22 @@ public class Item {
 	@Id
 	@Column(name = "ItemID", unique = true, nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 	@ManyToOne
 	@JoinColumn(name = "CategoryID")
 	private Category category;
 	@NotNull
 	private String name;
 	@NotNull
-	private long price;
-	private long count;
+	private int price;
+	private int count;
 	private Boolean active;
 	private String description;
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public Category getCategory() {
@@ -44,16 +44,16 @@ public class Item {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public long getPrice() {
+	public int getPrice() {
 		return price;
 	}
-	public void setPrice(long price) {
+	public void setPrice(int price) {
 		this.price = price;
 	}
-	public long getCount() {
+	public int getCount() {
 		return count;
 	}
-	public void setCount(long count) {
+	public void setCount(int count) {
 		this.count = count;
 	}
 	public Boolean isActive() {
@@ -67,5 +67,20 @@ public class Item {
 	}
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if (obj instanceof Item) {
+			return ((Item)obj).id == id;
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return (int) id;
 	}
 }

@@ -4,19 +4,23 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "OrderTable")
 public class Order {
 	@Id
 	@Column(name = "OrderID", unique = true, nullable = false)
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 	@ManyToOne
 	@JoinColumn(name = "UserID", nullable = false)
 	private User user;
@@ -24,14 +28,15 @@ public class Order {
 	private String deliveryTime;
 	private String name, phone, email, address, comment;
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private OrderStatus status;
 	@NotNull
-	private long total;
+	private int total;
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public User getUser() {
@@ -88,11 +93,31 @@ public class Order {
 	public void setStatus(OrderStatus status) {
 		this.status = status;
 	}
-	public long getTotal() {
+	public int getTotal() {
 		return total;
 	}
-	public void setTotal(long total) {
+	public void setTotal(int total) {
 		this.total = total;
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Order other = (Order) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 	
 	

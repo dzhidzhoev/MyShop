@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,11 +23,12 @@ public class Trait {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "TraitID", unique = true, nullable = false)
-	private long id;
+	private int id;
 	@NotNull
 	private String name;
 	private Boolean isSearchable;
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private TypeEnum type;
 	private int minValue, maxValue;
 	@Type(type = "list-array")
@@ -74,5 +77,11 @@ public class Trait {
 	}
 	public void setValues(List<String> values) {
 		this.values = values;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 }

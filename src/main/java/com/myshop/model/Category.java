@@ -1,26 +1,32 @@
 package com.myshop.model;
 
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "Category")
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "CategoryID", unique = true, nullable = false)
-	private long id;
+	private int id;
 	private String name;
 	@Column(name = "IsActive")
 	private Boolean isActive;
-	
+	@OneToMany(mappedBy = "category")
+	private List<Item> items;
 
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getName() {
@@ -37,5 +43,8 @@ public class Category {
 	}
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
+	}
+	public List<Item> getItems() {
+		return items;
 	}
 }

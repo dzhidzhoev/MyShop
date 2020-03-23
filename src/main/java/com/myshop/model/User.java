@@ -5,13 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "UserTable")
 public class User {
 	@Id
 	@Column(name = "UserID", nullable = false, unique = true)
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	private int id;
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(nullable = false)
@@ -22,10 +24,10 @@ public class User {
 	private String firstName, lastName, middleName;
 	private String phone, address;
 	
-	public long getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public String getEmail() {
