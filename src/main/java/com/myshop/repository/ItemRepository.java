@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.myshop.model.Item;
-import com.myshop.model.Order;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer> {

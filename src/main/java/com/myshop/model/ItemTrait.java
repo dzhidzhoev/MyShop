@@ -84,7 +84,7 @@ public class ItemTrait {
 	private Trait trait;
 	
 	private String value;
-	private int valueInt;
+	private Integer valueInt;
 	
 	public String getValue() {
 		return value;
@@ -92,10 +92,10 @@ public class ItemTrait {
 	public void setValue(String value) {
 		this.value = value;
 	}
-	public int getValueInt() {
+	public Integer getValueInt() {
 		return valueInt;
 	}
-	public void setValueInt(int valueInt) {
+	public void setValueInt(Integer valueInt) {
 		this.valueInt = valueInt;
 	}
 	public Item getItem() {
@@ -136,4 +136,5 @@ public class ItemTrait {
 			return false;
 		return true;
 	}
+	
 }

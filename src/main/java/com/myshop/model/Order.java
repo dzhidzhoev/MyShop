@@ -1,18 +1,24 @@
 package com.myshop.model;
 
 import java.sql.Timestamp;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "OrderTable")
@@ -32,6 +38,9 @@ public class Order {
 	private OrderStatus status;
 	@NotNull
 	private int total;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+	@Fetch(FetchMode.JOIN)
+	private Set<OrderItem> items;
 	
 	public int getId() {
 		return id;
@@ -99,6 +108,10 @@ public class Order {
 	public void setTotal(int total) {
 		this.total = total;
 	}
+	public Set<OrderItem> getItems() {
+		return items;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

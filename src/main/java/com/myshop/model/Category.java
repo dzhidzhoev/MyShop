@@ -1,6 +1,5 @@
 package com.myshop.model;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -9,10 +8,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.transaction.Transactional;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -30,6 +28,9 @@ public class Category {
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
 	@Fetch(FetchMode.JOIN)
 	private Set<Item> items;
+	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
+	@Fetch(FetchMode.JOIN)
+	private Set<Trait> traits;
 
 	public int getId() {
 		return id;
@@ -58,8 +59,11 @@ public class Category {
 		this.isActive = isActive;
 	}
 	
-	@Transactional
 	public Set<Item> getItems() {
 		return items;
+	}
+	
+	public Set<Trait> getTraits() {
+		return traits;
 	}
 }

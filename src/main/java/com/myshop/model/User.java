@@ -1,6 +1,5 @@
 package com.myshop.model;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -33,7 +32,7 @@ public class User {
 	private String phone, address;
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@Fetch(FetchMode.JOIN)
-	private List<Cart> cart;
+	private Set<Cart> cart;
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@Fetch(FetchMode.JOIN)
 	private Set<Order> orders;
@@ -111,7 +110,7 @@ public class User {
 		this.address = address;
 	}
 	
-	public List<Cart> getCart() {
+	public Set<Cart> getCart() {
 		return cart;
 	}
 	
