@@ -1,11 +1,19 @@
 package com.myshop.model;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "UserTable")
@@ -23,6 +31,12 @@ public class User {
 	private Boolean isAdmin, isDeleted;
 	private String firstName, lastName, middleName;
 	private String phone, address;
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@Fetch(FetchMode.JOIN)
+	private List<Cart> cart;
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@Fetch(FetchMode.JOIN)
+	private Set<Order> orders;
 	
 	public int getId() {
 		return id;
@@ -95,5 +109,13 @@ public class User {
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	
+	public List<Cart> getCart() {
+		return cart;
+	}
+	
+	public Set<Order> getOrders() {
+		return orders;
 	}
 }

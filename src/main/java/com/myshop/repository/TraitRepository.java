@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.myshop.model.Trait;
 
 @Repository
-public interface TraitRepository extends JpaRepository<Trait, Long> {
+public interface TraitRepository extends JpaRepository<Trait, Integer> {
 
 }

@@ -1,7 +1,6 @@
 package com.myshop;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.testng.Assert.assertEquals;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,9 +15,8 @@ import com.myshop.repository.TraitRepository;
 import com.myshop.repository.UserRepository;
 
 @SpringBootTest
-@TestPropertySource(value = "classpath:test.properties")
-public class MyShopApplicationTests extends AbstractTestNGSpringContextTests {
-	
+@TestPropertySource(value = "classpath:test_validate.properties")
+public class MyShopDBValidaitonTest extends AbstractTestNGSpringContextTests {
 	@Autowired CategoryRepository catRepo;
 	@Autowired ItemRepository itemRepo;
 	@Autowired OrderRepository orderRepo;
@@ -27,6 +25,10 @@ public class MyShopApplicationTests extends AbstractTestNGSpringContextTests {
 	
 	@Test
 	public void contextLoads() {
+		assertThat(catRepo).isNotNull();
+		assertThat(itemRepo).isNotNull();
+		assertThat(orderRepo).isNotNull();
+		assertThat(traitRepo).isNotNull();
+		assertThat(userRepo).isNotNull();
 	}
-
 }
