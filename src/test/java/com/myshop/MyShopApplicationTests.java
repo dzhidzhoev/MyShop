@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
+import com.myshop.repository.ItemTraitRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.TraitRepository;
 import com.myshop.repository.UserRepository;
@@ -21,6 +22,7 @@ public class MyShopApplicationTests extends AbstractTestNGSpringContextTests {
 	@Autowired OrderRepository orderRepo;
 	@Autowired TraitRepository traitRepo;
 	@Autowired UserRepository userRepo;
+	@Autowired ItemTraitRepository itemTraitRepo;
 	
 	@Test
 	public void contextLoads() {

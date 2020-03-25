@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -19,6 +21,8 @@ import org.hibernate.annotations.FetchMode;
 public class User {
 	@Id
 	@Column(name = "UserID", nullable = false, unique = true)
+//	@SequenceGenerator(name = "usertable_userid_seq", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usertable_userid_seq")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	@Column(unique = true, nullable = false)
@@ -35,6 +39,7 @@ public class User {
 	private Set<Cart> cart;
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	@Fetch(FetchMode.JOIN)
+	@OrderBy("orderTime DESC")
 	private Set<Order> orders;
 	
 	public int getId() {

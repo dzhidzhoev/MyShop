@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Fetch;
@@ -27,6 +28,8 @@ import com.vladmihalcea.hibernate.type.array.ListArrayType;
 		typeClass = ListArrayType.class)
 public class Trait {
 	@Id
+//	@SequenceGenerator(name = "Trait_TraitID_seq", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Trait_TraitID_seq")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "TraitID", unique = true, nullable = false)
 	private int id;
@@ -47,7 +50,6 @@ public class Trait {
 	}, inverseJoinColumns = {
 			@JoinColumn(name = "TraitID")
 	})
-	@Fetch(FetchMode.JOIN)
 	private List<Category> categories;
 	
 	public String getName() {

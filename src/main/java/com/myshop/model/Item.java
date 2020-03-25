@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Fetch;
@@ -20,6 +21,8 @@ import org.hibernate.annotations.FetchMode;
 public class Item {
 	@Id
 	@Column(name = "ItemID", unique = true, nullable = false)
+//	@SequenceGenerator(name = "Item_ItemID_seq", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Item_ItemID_seq")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	@ManyToOne
@@ -33,7 +36,6 @@ public class Item {
 	private Boolean active;
 	private String description;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
-	@Fetch(FetchMode.JOIN)
 	private Set<ItemTrait> traits;
 	
 	public int getId() {
@@ -77,10 +79,6 @@ public class Item {
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	
-	public Set<ItemTrait> getTraits() {
-		return traits;
 	}
 	
 	@Override

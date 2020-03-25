@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -19,6 +20,8 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "Category")
 public class Category {
 	@Id
+//	@SequenceGenerator(name = "Category_CategoryID_seq", allocationSize = 1)
+//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Category_CategoryID_seq")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "CategoryID", unique = true, nullable = false)
 	private int id;
@@ -26,11 +29,17 @@ public class Category {
 	@Column(name = "IsActive")
 	private Boolean isActive;
 	@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-	@Fetch(FetchMode.JOIN)
 	private Set<Item> items;
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
-	@Fetch(FetchMode.JOIN)
+	@ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
 	private Set<Trait> traits;
+	
+	public Category() {}
+
+	public Category(String name, Boolean isActive) {
+		this.name = name;
+		this.isActive = isActive;
+	}
+
 
 	public int getId() {
 		return id;
@@ -57,13 +66,5 @@ public class Category {
 	
 	public void setActive(boolean isActive) {
 		this.isActive = isActive;
-	}
-	
-	public Set<Item> getItems() {
-		return items;
-	}
-	
-	public Set<Trait> getTraits() {
-		return traits;
 	}
 }

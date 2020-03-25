@@ -1,4 +1,7 @@
 BEGIN;
+
+ALTER SEQUENCE Category_CategoryID_seq RESTART WITH 5;
+
 -- salt myshp82
 -- pwd 1
 INSERT INTO UserTable (UserID, Email, PwdHash, IsAdmin, LastName, FirstName, MiddleName, Address, Phone) VALUES 

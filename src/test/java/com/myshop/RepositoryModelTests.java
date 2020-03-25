@@ -25,6 +25,7 @@ import com.myshop.model.TypeEnum;
 import com.myshop.model.User;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
+import com.myshop.repository.ItemTraitRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.TraitRepository;
 import com.myshop.repository.UserRepository;
@@ -38,10 +39,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 	@Autowired OrderRepository orderRepo;
 	@Autowired TraitRepository traitRepo;
 	@Autowired UserRepository userRepo;
-	
-	@Test
-	public void contextLoads() {
-	}
+	@Autowired ItemTraitRepository itemTraitRepo;
 	
 	void checkTVItems(Set<Item> tvs) {
 		assertEquals(tvs.size(), 1);
@@ -98,33 +96,33 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(tvs.getName(), "Телевизоры");
 		assertEquals(tvs.isActive(), (Boolean)true);
 		assertEquals(itemRepo.findById(2).get().getCategory().getId(), 1);
-		checkTVItems(tvs.getItems());
-		var tvTraits = tvs.getTraits().stream().map(t -> t.getId()).sorted().toArray();
+		checkTVItems(itemRepo.findItemsByCategoryId(tvs.getId()));
+		var tvTraits = traitRepo.findTraitsByCategories_Id(tvs.getId()).stream().map(t -> t.getId()).sorted().toArray();
 		assertThat(Arrays.deepEquals(tvTraits, new Integer[] {1, 2, 3, 4, 5}));
 		
 		var players = catRepo.findById(2).get();
 		assertEquals(players.getName(), "Проигрыватели");
 		assertEquals(players.isActive(), (Boolean)true);
 		assertEquals(itemRepo.findById(3).get().getCategory().getId(), 2);
-		checkPlayers(players.getItems());
-		assertEquals(tvs.getTraits().size(), 3);
-		var playersTraits = tvs.getTraits().stream().map(t -> t.getId()).sorted().toArray();
+		checkPlayers(itemRepo.findItemsByCategoryId(players.getId()));
+		assertEquals(traitRepo.findTraitsByCategories_Id(tvs.getId()).size(), 3);
+		var playersTraits = traitRepo.findTraitsByCategories_Id(tvs.getId()).stream().map(t -> t.getId()).sorted().toArray();
 		assertThat(Arrays.deepEquals(playersTraits, new Integer[] {3, 6, 7}));
 		
 		var fridges = catRepo.findById(3).get();
 		assertEquals(fridges.getName(), "Холодильники");
 		assertEquals(fridges.isActive(), (Boolean)true);
 		assertEquals(itemRepo.findById(1).get().getCategory().getId(), 3);
-		checkFridges(fridges.getItems());
-		var fridgesTraits = fridges.getTraits().stream().map(t -> t.getId()).sorted().toArray();
+		checkFridges(itemRepo.findItemsByCategoryId(fridges.getId()));
+		var fridgesTraits = traitRepo.findTraitsByCategories_Id(fridges.getId()).stream().map(t -> t.getId()).sorted().toArray();
 		assertThat(Arrays.deepEquals(fridgesTraits, new Integer[] {1, 2, 3, 4, 5}));
 		
 		var washes = catRepo.findById(4).get();
 		assertEquals(washes.getName(), "Стиральные машины");
 		assertEquals(washes.isActive(),(Boolean)true);
 		assertEquals(itemRepo.findById(4).get().getCategory().getId(), 4);
-		checkWashes(washes.getItems());
-		var washesTraits = washes.getTraits().stream().map(t -> t.getId()).sorted().toArray();
+		checkWashes(itemRepo.findItemsByCategoryId(washes.getId()));
+		var washesTraits = traitRepo.findTraitsByCategories_Id(washes.getId()).stream().map(t -> t.getId()).sorted().toArray();
 		assertThat(Arrays.deepEquals(washesTraits, new Integer[] {1, 2, 3, 4, 5}));
 	}
 	
@@ -312,10 +310,10 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		checkTVItems(itemRepo.findById(2).stream().collect(Collectors.toSet()));
 		checkPlayers(itemRepo.findById(3).stream().collect(Collectors.toSet()));
 		checkWashes(itemRepo.findById(4).stream().collect(Collectors.toSet()));
-		assertThat(itemRepo.findById(2).get().getTraits().isEmpty());
-		assertThat(itemRepo.findById(4).get().getTraits().isEmpty());
+		assertThat(itemTraitRepo.findByItemId(itemRepo.findById(2).get().getId()).isEmpty());
+		assertThat(itemTraitRepo.findByItemId(itemRepo.findById(4).get().getId()).isEmpty());
 		List<ItemTrait> fridgeTraitSet = 
-				itemRepo.findById(1).get().getTraits().stream()
+				itemTraitRepo.findByItemId(itemRepo.findById(1).get().getId()).stream()
 				.sorted((i1, i2) -> 
 					Integer.compare(i1.getTrait().getId(), i2.getTrait().getId()))
 				.collect(Collectors.toList());
@@ -331,7 +329,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 				.map(ItemTrait::getValueInt).toArray(), 
 				new Integer[] {50, 150, 70}));
 		
-		var blurays = itemRepo.findById(3).get().getTraits();
+		var blurays = itemTraitRepo.findByItemId(itemRepo.findById(3).get().getId());
 		assertEquals(blurays.size(), 1);
 		var bluray = blurays.stream().findAny().get();
 		assertEquals(bluray.getItem().getId(), 3);
