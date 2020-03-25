@@ -18,7 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 @Entity
@@ -26,9 +25,8 @@ import org.hibernate.annotations.FetchMode;
 public class Order {
 	@Id
 	@Column(name = "OrderID", unique = true, nullable = false)
-//	@SequenceGenerator(name = "OrderTable_OrderID_seq", allocationSize = 1)
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderTable_OrderID_seq")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "OrderTable_OrderID_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "OrderTable_OrderID_seq")
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "UserID", nullable = false)
@@ -42,7 +40,6 @@ public class Order {
 	@NotNull
 	private int total;
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-	@Fetch(FetchMode.JOIN)
 	private Set<OrderItem> items;
 	
 	public int getId() {
@@ -110,9 +107,6 @@ public class Order {
 	}
 	public void setTotal(int total) {
 		this.total = total;
-	}
-	public Set<OrderItem> getItems() {
-		return items;
 	}
 	
 	@Override

@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.myshop.model.ItemTrait;
 
-public interface ItemTraitRepository extends JpaRepository<ItemTrait, Integer> {
+public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.ID> {
 	public Set<ItemTrait> findByItemId(int itemId);
 }

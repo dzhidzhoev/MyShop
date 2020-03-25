@@ -20,9 +20,8 @@ import org.hibernate.annotations.FetchMode;
 @Table(name = "Category")
 public class Category {
 	@Id
-//	@SequenceGenerator(name = "Category_CategoryID_seq", allocationSize = 1)
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Category_CategoryID_seq")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "Category_CategoryID_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Category_CategoryID_seq")
 	@Column(name = "CategoryID", unique = true, nullable = false)
 	private int id;
 	private String name;

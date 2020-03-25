@@ -28,9 +28,8 @@ import com.vladmihalcea.hibernate.type.array.ListArrayType;
 		typeClass = ListArrayType.class)
 public class Trait {
 	@Id
-//	@SequenceGenerator(name = "Trait_TraitID_seq", allocationSize = 1)
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Trait_TraitID_seq")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "Trait_TraitID_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Trait_TraitID_seq")
 	@Column(name = "TraitID", unique = true, nullable = false)
 	private int id;
 	@NotNull
@@ -46,9 +45,9 @@ public class Trait {
 	private String unit;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CategoryTrait", joinColumns = {
-			@JoinColumn(name = "CategoryID")
-	}, inverseJoinColumns = {
 			@JoinColumn(name = "TraitID")
+	}, inverseJoinColumns = {
+			@JoinColumn(name = "CategoryID")
 	})
 	private List<Category> categories;
 	

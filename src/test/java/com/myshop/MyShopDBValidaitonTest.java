@@ -1,6 +1,6 @@
 package com.myshop;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.testng.Assert.assertNotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,9 +8,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
+import com.myshop.repository.CartRepository;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
 import com.myshop.repository.ItemTraitRepository;
+import com.myshop.repository.OrderItemRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.TraitRepository;
 import com.myshop.repository.UserRepository;
@@ -24,14 +26,18 @@ public class MyShopDBValidaitonTest extends AbstractTestNGSpringContextTests {
 	@Autowired TraitRepository traitRepo;
 	@Autowired UserRepository userRepo;
 	@Autowired ItemTraitRepository itemTraitRepo;
+	@Autowired CartRepository cartRepo;
+	@Autowired OrderItemRepository orderItemRepo;
 	
 	@Test
 	public void contextLoads() {
-		assertThat(catRepo).isNotNull();
-		assertThat(itemRepo).isNotNull();
-		assertThat(orderRepo).isNotNull();
-		assertThat(traitRepo).isNotNull();
-		assertThat(userRepo).isNotNull();
-		assertThat(itemTraitRepo).isNotNull();
+		assertNotNull(catRepo);
+		assertNotNull(itemRepo);
+		assertNotNull(orderRepo);
+		assertNotNull(traitRepo);
+		assertNotNull(userRepo);
+		assertNotNull(itemTraitRepo);
+		assertNotNull(cartRepo);
+		assertNotNull(orderItemRepo);
 	}
 }

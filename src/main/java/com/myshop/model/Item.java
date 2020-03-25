@@ -21,9 +21,8 @@ import org.hibernate.annotations.FetchMode;
 public class Item {
 	@Id
 	@Column(name = "ItemID", unique = true, nullable = false)
-//	@SequenceGenerator(name = "Item_ItemID_seq", allocationSize = 1)
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Item_ItemID_seq")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "Item_ItemID_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "Item_ItemID_seq")
 	private int id;
 	@ManyToOne
 	@JoinColumn(name = "CategoryID")

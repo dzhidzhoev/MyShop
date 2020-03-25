@@ -6,9 +6,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
+import com.myshop.repository.CartRepository;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
 import com.myshop.repository.ItemTraitRepository;
+import com.myshop.repository.OrderItemRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.TraitRepository;
 import com.myshop.repository.UserRepository;
@@ -23,6 +25,8 @@ public class MyShopApplicationTests extends AbstractTestNGSpringContextTests {
 	@Autowired TraitRepository traitRepo;
 	@Autowired UserRepository userRepo;
 	@Autowired ItemTraitRepository itemTraitRepo;
+	@Autowired CartRepository cartRepo;
+	@Autowired OrderItemRepository orderItemRepo;
 	
 	@Test
 	public void contextLoads() {

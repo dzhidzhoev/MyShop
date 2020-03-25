@@ -1,8 +1,8 @@
 package com.myshop;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +23,11 @@ import com.myshop.model.OrderStatus;
 import com.myshop.model.Trait;
 import com.myshop.model.TypeEnum;
 import com.myshop.model.User;
+import com.myshop.repository.CartRepository;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
 import com.myshop.repository.ItemTraitRepository;
+import com.myshop.repository.OrderItemRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.TraitRepository;
 import com.myshop.repository.UserRepository;
@@ -40,6 +42,8 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 	@Autowired TraitRepository traitRepo;
 	@Autowired UserRepository userRepo;
 	@Autowired ItemTraitRepository itemTraitRepo;
+	@Autowired CartRepository cartRepo;
+	@Autowired OrderItemRepository orderItemRepo;
 	
 	void checkTVItems(Set<Item> tvs) {
 		assertEquals(tvs.size(), 1);
@@ -49,7 +53,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(tv.getName(), "Телевизор Power9");
 		assertEquals(tv.getPrice(), 20000);
 		assertEquals(tv.getCount(), 200);
-		assertThat(tv.isActive());
+		assertTrue(tv.isActive());
 		assertEquals(tv.getDescription(), "Дешевый телевизор");
 	}
 	
@@ -61,7 +65,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(player.getName(), "Bluray player SONTY");
 		assertEquals(player.getPrice(), 9000);
 		assertEquals(player.getCount(), 0);
-		assertThat(!player.isActive());
+		assertTrue(!player.isActive());
 		assertEquals(player.getDescription(), "Снят с продажи");
 	}
 	
@@ -73,7 +77,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(fridge.getName(), "Холодильник Me-3000");
 		assertEquals(fridge.getPrice(), 100000);
 		assertEquals(fridge.getCount(), 10);
-		assertThat(fridge.isActive());
+		assertTrue(fridge.isActive());
 		assertEquals(fridge.getDescription(), "Хороший холодильник для дома");
 	}
 	
@@ -85,7 +89,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(wash.getName(), "Стиральная машина БОШ");
 		assertEquals(wash.getPrice(), 50000);
 		assertEquals(wash.getCount(), 100);
-		assertThat(wash.isActive());
+		assertTrue(wash.isActive());
 		assertEquals(wash.getDescription(), "Бери и используй");
 	}
 	
@@ -98,16 +102,16 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(itemRepo.findById(2).get().getCategory().getId(), 1);
 		checkTVItems(itemRepo.findItemsByCategoryId(tvs.getId()));
 		var tvTraits = traitRepo.findTraitsByCategories_Id(tvs.getId()).stream().map(t -> t.getId()).sorted().toArray();
-		assertThat(Arrays.deepEquals(tvTraits, new Integer[] {1, 2, 3, 4, 5}));
+		assertTrue(Arrays.deepEquals(tvTraits, new Integer[] {1, 2, 3, 4, 5}));
 		
 		var players = catRepo.findById(2).get();
 		assertEquals(players.getName(), "Проигрыватели");
 		assertEquals(players.isActive(), (Boolean)true);
 		assertEquals(itemRepo.findById(3).get().getCategory().getId(), 2);
 		checkPlayers(itemRepo.findItemsByCategoryId(players.getId()));
-		assertEquals(traitRepo.findTraitsByCategories_Id(tvs.getId()).size(), 3);
-		var playersTraits = traitRepo.findTraitsByCategories_Id(tvs.getId()).stream().map(t -> t.getId()).sorted().toArray();
-		assertThat(Arrays.deepEquals(playersTraits, new Integer[] {3, 6, 7}));
+		assertEquals(traitRepo.findTraitsByCategories_Id(players.getId()).size(), 3);
+		var playersTraits = traitRepo.findTraitsByCategories_Id(players.getId()).stream().map(t -> t.getId()).sorted().toArray();
+		assertTrue(Arrays.deepEquals(playersTraits, new Integer[] {3, 6, 7}));
 		
 		var fridges = catRepo.findById(3).get();
 		assertEquals(fridges.getName(), "Холодильники");
@@ -115,7 +119,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(itemRepo.findById(1).get().getCategory().getId(), 3);
 		checkFridges(itemRepo.findItemsByCategoryId(fridges.getId()));
 		var fridgesTraits = traitRepo.findTraitsByCategories_Id(fridges.getId()).stream().map(t -> t.getId()).sorted().toArray();
-		assertThat(Arrays.deepEquals(fridgesTraits, new Integer[] {1, 2, 3, 4, 5}));
+		assertTrue(Arrays.deepEquals(fridgesTraits, new Integer[] {1, 2, 3, 4, 5}));
 		
 		var washes = catRepo.findById(4).get();
 		assertEquals(washes.getName(), "Стиральные машины");
@@ -123,7 +127,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(itemRepo.findById(4).get().getCategory().getId(), 4);
 		checkWashes(itemRepo.findItemsByCategoryId(washes.getId()));
 		var washesTraits = traitRepo.findTraitsByCategories_Id(washes.getId()).stream().map(t -> t.getId()).sorted().toArray();
-		assertThat(Arrays.deepEquals(washesTraits, new Integer[] {1, 2, 3, 4, 5}));
+		assertTrue(Arrays.deepEquals(washesTraits, new Integer[] {1, 2, 3, 4, 5}));
 	}
 	
 	boolean equalsUserData(User obj, String email, String pwdHash, String emailToken, String pwdChangeToken, Boolean isAdmin, Boolean isDeleted, String firstName, String lastName, String middleName, String phone, String address) {
@@ -216,41 +220,41 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		var user1 = userRepo.findById(1).get();
 		var user2 = userRepo.findById(2).get();
 		var user3 = userRepo.findById(3).get();
-		assertThat(equalsUserData(user1, 
+		assertTrue(equalsUserData(user1, 
 				"1@1.com", 
 				"444d01eb0131025c0f712674662ecd25", 
 				null, 
 				null, 
 				true, 
 				null, 
-				"Иванов", "Админ", "Иванович", 
+				"Админ","Иванов", "Иванович", 
 				"+000", 
 				"Москва"));
-		assertThat(equalsUserData(user2, 
+		assertTrue(equalsUserData(user2, 
 				"2@1.com", 
 				"444d01eb0131025c0f712674662ecd25", 
 				null, 
 				null, 
 				false, 
 				null, 
-				"Петров", "Петр", "Петрович", 
+				 "Петр","Петров", "Петрович", 
 				"+000", 
 				"Москва"));
-		assertThat(equalsUserData(user3, 
+		assertTrue(equalsUserData(user3, 
 				"3@1.com", 
-				"444d01eb013025c0f712674662ecd25", 
+				"444d01eb0131025c0f712674662ecd25", 
 				null, 
 				null, 
 				false, 
 				null, 
-				"Сидоров", "Семён", "Семёнович", 
+				 "Семён","Сидоров", "Семёнович", 
 				"+000", 
 				"Иваново"));
-		assertEquals(user2.getCart().size(), 0);
-		assertEquals(user3.getCart().size(), 0);
-		checkCart1(user1.getCart());
-		var ord1 = user1.getOrders();
-		var ord2 = user2.getOrders();
+		assertEquals(cartRepo.findByUserId(user2.getId()).size(), 0);
+		assertEquals(cartRepo.findByUserId(user3.getId()).size(), 0);
+		checkCart1(cartRepo.findByUserId(user1.getId()));
+		var ord1 = orderRepo.findByUserId(user1.getId());
+		var ord2 = orderRepo.findByUserId(user2.getId());
 		assertEquals(ord1.size(), 1);
 		assertEquals(ord1.stream().findAny().get().getId(), 1);
 		assertEquals(ord2.size(), 2);
@@ -267,9 +271,15 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 				return false;
 		} else if (!isSearchable.equals(other.isSearchable()))
 			return false;
-		if (maxValue != other.getMaxValue())
+		if (maxValue == null) {
+			if (other.getMaxValue() != null)
+				return false;
+		} else if (!maxValue.equals(other.getMaxValue()))
 			return false;
-		if (minValue != other.getMinValue())
+		if (minValue == null) {
+			if (other.getMinValue() != null)
+				return false;
+		} else if (!minValue.equals(other.getMinValue()))
 			return false;
 		if (name == null) {
 			if (other.getName() != null)
@@ -294,13 +304,13 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 	@Test
 	public void testModelDataTrait() {
 		assertEquals(traitRepo.count(), 7);
-		assertThat(equalsTrait(traitRepo.findById(1).get(), "Производитель", true, TypeEnum.StringType, null, null, null, null));
-		assertThat(equalsTrait(traitRepo.findById(2).get(), "Страна сборки", true, TypeEnum.StringType, null, null, null, null));
-		assertThat(equalsTrait(traitRepo.findById(3).get(), "Ширина", true, TypeEnum.IntType, 10, 250, null, "см"));
-		assertThat(equalsTrait(traitRepo.findById(4).get(), "Высота", true, TypeEnum.IntType, 10, 250, null, "см"));
-		assertThat(equalsTrait(traitRepo.findById(7).get(), "Длина", true, TypeEnum.IntType, 10, 250, null, "см"));
-		assertThat(equalsTrait(traitRepo.findById(5).get(), "Толщина", true, TypeEnum.IntType, 1, 250, null, "см"));
-		assertThat(equalsTrait(traitRepo.findById(6).get(), "Стандарт дисков", true, TypeEnum.EnumType, null, null, new String[] {"DVD", "Bluray"}, null));
+		assertTrue(equalsTrait(traitRepo.findById(1).get(), "Производитель", true, TypeEnum.StringType, null, null, null, null));
+		assertTrue(equalsTrait(traitRepo.findById(2).get(), "Страна сборки", true, TypeEnum.StringType, null, null, null, null));
+		assertTrue(equalsTrait(traitRepo.findById(3).get(), "Ширина", true, TypeEnum.IntType, 10, 250, null, "см"));
+		assertTrue(equalsTrait(traitRepo.findById(4).get(), "Высота", true, TypeEnum.IntType, 10, 250, null, "см"));
+		assertTrue(equalsTrait(traitRepo.findById(7).get(), "Длина", true, TypeEnum.IntType, 10, 250, null, "см"));
+		assertTrue(equalsTrait(traitRepo.findById(5).get(), "Толщина", true, TypeEnum.IntType, 1, 250, null, "см"));
+		assertTrue(equalsTrait(traitRepo.findById(6).get(), "Стандарт дисков", true, TypeEnum.EnumType, null, null, new String[] {"DVD", "Bluray"}, null));
 	}
 
 	@Test
@@ -310,8 +320,8 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		checkTVItems(itemRepo.findById(2).stream().collect(Collectors.toSet()));
 		checkPlayers(itemRepo.findById(3).stream().collect(Collectors.toSet()));
 		checkWashes(itemRepo.findById(4).stream().collect(Collectors.toSet()));
-		assertThat(itemTraitRepo.findByItemId(itemRepo.findById(2).get().getId()).isEmpty());
-		assertThat(itemTraitRepo.findByItemId(itemRepo.findById(4).get().getId()).isEmpty());
+		assertTrue(itemTraitRepo.findByItemId(itemRepo.findById(2).get().getId()).isEmpty());
+		assertTrue(itemTraitRepo.findByItemId(itemRepo.findById(4).get().getId()).isEmpty());
 		List<ItemTrait> fridgeTraitSet = 
 				itemTraitRepo.findByItemId(itemRepo.findById(1).get().getId()).stream()
 				.sorted((i1, i2) -> 
@@ -321,11 +331,11 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		fridgeTraitSet.forEach(f -> assertEquals(f.getValue(), null));
 		fridgeTraitSet.stream()
 			.map(t -> t.getItem().getId())
-			.forEach(t -> assertThat(t == 1));
-		assertThat(Arrays.deepEquals(fridgeTraitSet.stream()
+			.forEach(t -> assertTrue(t == 1));
+		assertTrue(Arrays.deepEquals(fridgeTraitSet.stream()
 			.map(t -> t.getTrait().getId())
 			.toArray(), new Integer[] {3, 4, 5}));
-		assertThat(Arrays.deepEquals(fridgeTraitSet.stream()
+		assertTrue(Arrays.deepEquals(fridgeTraitSet.stream()
 				.map(ItemTrait::getValueInt).toArray(), 
 				new Integer[] {50, 150, 70}));
 		
@@ -353,7 +363,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(order1.getEmail(), null);
 		assertEquals(order1.getAddress(), null);
 		assertEquals(order1.getComment(), null);
-		var items1 = order1.getItems();
+		var items1 = orderItemRepo.findByOrderId(order1.getId());
 		assertEquals(items1.size(), 1);
 		var it11 = items1.stream().findAny().get();
 		assertEquals(it11.getOrder().getId(), 1);
@@ -373,7 +383,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(order2.getEmail(), null);
 		assertEquals(order2.getAddress(), null);
 		assertEquals(order2.getComment(), null);
-		var items2 = order2.getItems();
+		var items2 = orderItemRepo.findByOrderId(order2.getId());
 		assertEquals(items2.size(), 2);
 		items2.stream().map(x -> x.getOrder().getId()).forEach(x -> assertEquals(x, (Integer)2));
 		Arrays.deepEquals(items2.stream()
@@ -398,7 +408,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(order3.getEmail(), null);
 		assertEquals(order3.getAddress(), null);
 		assertEquals(order3.getComment(), null);
-		var items3 = order3.getItems();
+		var items3 = orderItemRepo.findByOrderId(order3.getId());
 		assertEquals(items3.size(), 1);
 		var it31 = items3.stream().findAny().get();
 		assertEquals(it31.getOrder().getId(), 3);

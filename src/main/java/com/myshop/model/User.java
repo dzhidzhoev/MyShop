@@ -9,21 +9,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "UserTable")
 public class User {
 	@Id
 	@Column(name = "UserID", nullable = false, unique = true)
-//	@SequenceGenerator(name = "usertable_userid_seq", allocationSize = 1)
-//	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usertable_userid_seq")
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@SequenceGenerator(name = "usertable_userid_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usertable_userid_seq")
 	private int id;
 	@Column(unique = true, nullable = false)
 	private String email;
@@ -35,13 +30,29 @@ public class User {
 	private String firstName, lastName, middleName;
 	private String phone, address;
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-	@Fetch(FetchMode.JOIN)
 	private Set<Cart> cart;
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-	@Fetch(FetchMode.JOIN)
-	@OrderBy("orderTime DESC")
 	private Set<Order> orders;
 	
+	public User() {}
+	
+	public User(String email, String pwdHash, String emailToken, String pwdChangeToken, Boolean isAdmin,
+			Boolean isDeleted, String firstName, String lastName, String middleName, String phone, String address) {
+		super();
+		this.email = email;
+		this.pwdHash = pwdHash;
+		this.emailToken = emailToken;
+		this.pwdChangeToken = pwdChangeToken;
+		this.isAdmin = isAdmin;
+		this.isDeleted = isDeleted;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.middleName = middleName;
+		this.phone = phone;
+		this.address = address;
+	}
+
+
 	public int getId() {
 		return id;
 	}
@@ -113,13 +124,5 @@ public class User {
 	}
 	public void setAddress(String address) {
 		this.address = address;
-	}
-	
-	public Set<Cart> getCart() {
-		return cart;
-	}
-	
-	public Set<Order> getOrders() {
-		return orders;
 	}
 }
