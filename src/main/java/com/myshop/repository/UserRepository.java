@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.dao.DataAccessException;
@@ -23,7 +24,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 	public List<User> findByEmailToken(String emailToken);
 	public List<User> findByPwdChangeToken(String pwdChangeToken);
 	
-	public default String getPasswordHash(String password) {
+	public default String getPasswordHash(@NotNull String password) {
 		MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");
@@ -32,12 +33,14 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		}
 		md.update(password.getBytes());
 		md.update("myshp82".getBytes());
-		return DatatypeConverter.printHexBinary(md.digest());
+		return DatatypeConverter.printHexBinary(md.digest()).toLowerCase();
 	}
 	
 	public default Optional<User> logIn(String email, String password) {
+		if (email == null || password == null) {
+			return Optional.empty();
+		}
 		email = email.trim();
-		password = password.trim();
 		
 		var res = findByEmailIgnoreCaseAndPwdHashIgnoreCase(email, getPasswordHash(password));
 		if (res.isPresent() && res.get().isDeleted()) {
@@ -87,6 +90,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		if (isPasswordValid(newPwd)) {
 			findByPwdChangeToken(token).forEach((user) -> {
 				if (!user.isDeleted()) {
+					user.setPwdChangeToken(null);
 					user.setPwdHash(getPasswordHash(newPwd.trim()));
 					save(user);
 				}
@@ -95,7 +99,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		}
 	}
 	
-	public default Pair<User, String> registerUser(String lastName, String firstName, String middleName, 
+	public default Pair<Optional<User>, String> registerUser(String lastName, String firstName, String middleName, 
 			String phoneNumber, String address, String email, String password) {
 		if (lastName == null) {
 			lastName = "";
@@ -111,24 +115,27 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		}
 		lastName = lastName.trim();
 		firstName = firstName.trim();
+		if (middleName != null) {
+			middleName = middleName.trim();
+		}
 		email = email.trim();
 		if (lastName.isEmpty()) {
-			return Pair.of(null, "last name is empty");
+			return Pair.of(Optional.empty(), "last name is empty");
 		}
 		if (firstName.isEmpty()) {
-			return Pair.of(null, "first name is empty");
+			return Pair.of(Optional.empty(), "first name is empty");
 		}
 		if (email.isEmpty()) {
-			return Pair.of(null, "email is empty");
+			return Pair.of(Optional.empty(), "email is empty");
 		}
 		if (!email.contains("@") || email.length() < 4) {
-			return Pair.of(null, "not an email");
+			return Pair.of(Optional.empty(), "not an email");
 		}
 		if (password.isEmpty() || !isPasswordValid(password)) {
-			return Pair.of(null, "password is empty");
+			return Pair.of(Optional.empty(), "password is empty");
 		}
 		if (findByEmailIgnoreCase(email).isPresent()) {
-			return Pair.of(null, "email has been used already");
+			return Pair.of(Optional.empty(), "email has been used already");
 		}
 		var user = new User().setLastName(lastName)
 				.setFirstName(firstName)
@@ -141,10 +148,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		try {
 			saveAndFlush(user);
 		} catch (DataAccessException e) {
-			return Pair.of(null, "unknown exception " + e.toString());
+			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
 		}
 		
-		return Pair.of(user, "ok");
+		return Pair.of(Optional.of(user), "ok");
 	}
 	
 	public default void removeUser(int userID) {
