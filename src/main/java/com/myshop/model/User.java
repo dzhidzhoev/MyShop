@@ -34,10 +34,12 @@ public class User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
 	private Set<Order> orders;
 	
-	public User() {}
+	public User() {
+		this(null, null, null, null, false, false, null, null, null, null, null);
+	}
 	
-	public User(String email, String pwdHash, String emailToken, String pwdChangeToken, Boolean isAdmin,
-			Boolean isDeleted, String firstName, String lastName, String middleName, String phone, String address) {
+	public User(String email, String pwdHash, String emailToken, String pwdChangeToken, boolean isAdmin,
+			boolean isDeleted, String firstName, String lastName, String middleName, String phone, String address) {
 		super();
 		this.email = email;
 		this.pwdHash = pwdHash;
@@ -56,73 +58,90 @@ public class User {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public User setId(int id) {
 		this.id = id;
+		return this;
 	}
 	public String getEmail() {
 		return email;
 	}
-	public void setEmail(String email) {
+	public User setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 	public String getPwdHash() {
 		return pwdHash;
 	}
-	public void setPwdHash(String pwdHash) {
+	public User setPwdHash(String pwdHash) {
 		this.pwdHash = pwdHash;
+		return this;
 	}
 	public String getEmailToken() {
 		return emailToken;
 	}
-	public void setEmailToken(String emailToken) {
+	public User setEmailToken(String emailToken) {
 		this.emailToken = emailToken;
+		return this;
 	}
 	public String getPwdChangeToken() {
 		return pwdChangeToken;
 	}
-	public void setPwdChangeToken(String pwdChangeToken) {
+	public User setPwdChangeToken(String pwdChangeToken) {
 		this.pwdChangeToken = pwdChangeToken;
+		return this;
 	}
-	public Boolean isAdmin() {
+	public Boolean isAdminOrNull() {
 		return isAdmin;
 	}
-	public void setAdmin(boolean isAdmin) {
+	public User setAdmin(Boolean isAdmin) {
 		this.isAdmin = isAdmin;
+		return this;
 	}
-	public Boolean isDeleted() {
+	public Boolean isDeletedOrNull() {
 		return isDeleted;
 	}
-	public void setDeleted(boolean isDeleted) {
+	
+	public boolean isDeleted() {
+		return Boolean.valueOf(true).equals(isDeleted);
+	}
+	
+	public User setDeleted(Boolean isDeleted) {
 		this.isDeleted = isDeleted;
+		return this;
 	}
 	public String getFirstName() {
 		return firstName;
 	}
-	public void setFirstName(String firstName) {
+	public User setFirstName(String firstName) {
 		this.firstName = firstName;
+		return this;
 	}
 	public String getLastName() {
 		return lastName;
 	}
-	public void setLastName(String lastName) {
+	public User setLastName(String lastName) {
 		this.lastName = lastName;
+		return this;
 	}
 	public String getMiddleName() {
 		return middleName;
 	}
-	public void setMiddleName(String middleName) {
+	public User setMiddleName(String middleName) {
 		this.middleName = middleName;
+		return this;
 	}
 	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(String phone) {
+	public User setPhone(String phone) {
 		this.phone = phone;
+		return this;
 	}
 	public String getAddress() {
 		return address;
 	}
-	public void setAddress(String address) {
+	public User setAddress(String address) {
 		this.address = address;
+		return this;
 	}
 }

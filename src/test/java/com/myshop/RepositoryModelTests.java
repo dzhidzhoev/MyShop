@@ -156,14 +156,14 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		} else if (!firstName.equals(other.getFirstName()))
 			return false;
 		if (isAdmin == null) {
-			if (other.isAdmin() != null)
+			if (other.isAdminOrNull() != null)
 				return false;
-		} else if (!isAdmin.equals(other.isAdmin()))
+		} else if (!isAdmin.equals(other.isAdminOrNull()))
 			return false;
 		if (isDeleted == null) {
-			if (other.isDeleted() != null)
+			if (other.isDeletedOrNull() != null)
 				return false;
-		} else if (!isDeleted.equals(other.isDeleted()))
+		} else if (!isDeleted.equals(other.isDeletedOrNull()))
 			return false;
 		if (lastName == null) {
 			if (other.getLastName() != null)

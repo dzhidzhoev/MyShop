@@ -11,7 +11,6 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.myshop.model.Category;
-import com.myshop.model.User;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
 import com.myshop.repository.ItemTraitRepository;
@@ -21,7 +20,7 @@ import com.myshop.repository.UserRepository;
 
 @SpringBootTest
 @TestPropertySource(value = "classpath:test.properties")
-public class RepositoryModelCRUDTests extends AbstractTestNGSpringContextTests {
+public class CategoryRepositoryTests extends AbstractTestNGSpringContextTests {
 	
 	@Autowired CategoryRepository catRepo;
 	@Autowired ItemRepository itemRepo;
@@ -71,19 +70,6 @@ public class RepositoryModelCRUDTests extends AbstractTestNGSpringContextTests {
 		assertEquals(catRepo.findByNameContaining(CATEGORY_NAME).size(), 0);
 	}
 	
-	@Test
-	public void findByEmailTest() {
-		var res = userRepo.findByEmail("1@1.com").get();
-		assertEquals(res.getId(), 1);
-		var res2 = userRepo.findByEmail("4@4.com");
-		assertEquals(res2.isPresent(), false);
-	}
 	
-	@Test
-	public void userCrudTest() {
-//		var USER_NAME = "username@user.com";
-//		var user = userRepo.saveAndFlush(new User(USER_NAME, USER_NAME, USER_NAME, null, false, false, USER_NAME, null, null, null, null)));
-//		
-	}
 	
 }

@@ -1,6 +1,10 @@
 BEGIN;
 
-ALTER SEQUENCE Category_CategoryID_seq RESTART WITH 5;
+ALTER SEQUENCE Category_CategoryID_seq RESTART WITH 10;
+ALTER SEQUENCE Item_ItemID_seq RESTART WITH 10;
+ALTER SEQUENCE OrderTable_OrderID_seq RESTART WITH 10;
+ALTER SEQUENCE Trait_TraitID_seq RESTART WITH 10;
+ALTER SEQUENCE usertable_userid_seq RESTART WITH 10;
 
 -- salt myshp82
 -- pwd 1
