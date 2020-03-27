@@ -224,8 +224,8 @@ public class TraitRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertTrue(intTrait.isPresent());
 		assertTrue(intTrait.get().getName().equals("name"));
 		assertEquals(traitRepo.findById(id).get().getType(), TypeEnum.IntType);
-		assertEquals(traitRepo.findById(id).get().getMinValue(), (Integer)0);
-		assertEquals(traitRepo.findById(id).get().getMaxValue(), (Integer)10);
+		assertEquals(traitRepo.findById(id).get().getMinValueOrNull(), (Integer)0);
+		assertEquals(traitRepo.findById(id).get().getMaxValueOrNull(), (Integer)10);
 		
 		// string ok
 		var stringTrait = traitRepo.addOrUpdateTrait(id, "name", 

@@ -70,8 +70,8 @@ public class Trait {
 		this.isSearchable = isSearchable;
 		return this;
 	}
-	public Integer getMinValue() {
-		return minValue;
+	public int getMinValue() {
+		return minValue == null ? 0 : minValue;
 	}
 	public Trait setMinValue(Integer minValue) {
 		this.minValue = minValue;
@@ -84,8 +84,16 @@ public class Trait {
 		this.unit = unit;
 		return this;
 	}
-	public Integer getMaxValue() {
+	
+	public Integer getMaxValueOrNull() {
 		return maxValue;
+	}
+	public Integer getMinValueOrNull() {
+		return minValue;
+	}
+	
+	public int getMaxValue() {
+		return maxValue == null ? Integer.MAX_VALUE : maxValue;
 	}
 	public Trait setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;

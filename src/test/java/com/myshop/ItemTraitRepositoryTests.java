@@ -1,6 +1,10 @@
 package com.myshop;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
+
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +65,43 @@ public class ItemTraitRepositoryTests extends AbstractTestNGSpringContextTests {
 	public void itemTraitSetTest() {
 		assertEquals(itemTraitRepo.findAll().size(), 4);
 		
-		
+		// not present
+		var unknownIT = new ItemTrait().setId(new ID(1, 100));
+		assertEquals(itemTraitRepo.setValue(unknownIT, "some", traitRepo, itemRepo), Optional.empty());
+		unknownIT = new ItemTrait().setId(new ID(100, 1));
+		assertEquals(itemTraitRepo.setValue(unknownIT, "some", traitRepo, itemRepo), Optional.empty());
+		// integer out of bound
+		var intId = new ID(1, 3);
+		var outIT = new ItemTrait().setId(intId);
+		assertEquals(itemTraitRepo.setValue(outIT, "5", traitRepo, itemRepo), Optional.empty());
+		assertEquals(itemTraitRepo.setValue(outIT, "59999", traitRepo, itemRepo), Optional.empty());
+		// integer ok 
+		assertTrue(itemTraitRepo.setValue(outIT, "60", traitRepo, itemRepo).isPresent());
+		assertEquals(itemTraitRepo.findById(intId).get().getValueInt(), 60);
+		assertTrue(itemTraitRepo.setValue(outIT, "50", traitRepo, itemRepo).isPresent());
+		assertEquals(itemTraitRepo.findById(intId).get().getValueInt(), 50);
+		// string null
+		ID stringId = new ID(3, 1);
+		ItemTrait stringTrait = new ItemTrait().setId(stringId);
+		// string ok
+		assertTrue(itemTraitRepo.setValue(stringTrait, "helo", traitRepo, itemRepo).isPresent());
+		assertEquals(itemTraitRepo.findById(stringId).get().getValue(), 
+				"helo");
+		assertEquals(itemTraitRepo.setValue(stringTrait, null, traitRepo, itemRepo).get().getValue(), "");
+		itemTraitRepo.deleteById(stringId);
+		assertFalse(itemTraitRepo.findById(stringId).isPresent());
+
+		// enum null
+		var enumId = new ID(3, 6);
+		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), null, traitRepo, itemRepo), Optional.empty());
+		// enum empty
+		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), "unknown value", traitRepo, itemRepo), Optional.empty());
+		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), "", traitRepo, itemRepo), Optional.empty());
+		// enum ok
+		assertEquals(itemTraitRepo.setValue(itemTraitRepo.findById(enumId).get(), "DVD", traitRepo, itemRepo).isPresent(), true);
+		assertEquals(itemTraitRepo.findById(enumId).get().getValue(), "DVD");
+		assertEquals(itemTraitRepo.setValue(itemTraitRepo.findById(enumId).get(), "Bluray", traitRepo, itemRepo).isPresent(), true);
+		assertEquals(itemTraitRepo.findById(enumId).get().getValue(), "Bluray");
 		
 		assertEquals(itemTraitRepo.findAll().size(), 4);
 	}

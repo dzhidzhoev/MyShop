@@ -118,6 +118,15 @@ public class ItemTrait {
 		return trait;
 	}
 	
+	public ItemTrait setItem(Item item) {
+		this.item = item;
+		return this;
+	}
+	
+	public ItemTrait setTrait(Trait trait) {
+		this.trait = trait;
+		return this;
+	}
 	
 	public ID getId() {
 		return itemTrait;

@@ -36,13 +36,16 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 		return "";
 	}
 	
-	public default Optional<ItemTrait> setValue(ItemTrait itemTrait, String value, TraitRepository traitRepo) {
+	public default Optional<ItemTrait> setValue(ItemTrait itemTrait, String value, TraitRepository traitRepo, ItemRepository itemRepo) {
 		if (itemTrait == null) return null;
 		if (value == null) {
 			value = "";
 		}
-		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getTrait().getId());
+		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getId().getTraitID());
 		if (!traitRes.isPresent()) {
+			return Optional.empty();
+		}
+		if (!itemRepo.findById(itemTrait.getId().getItemID()).isPresent()) {
 			return Optional.empty();
 		}
 		var trait = traitRes.get();
@@ -52,7 +55,17 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			break;
 		case IntType:
 			try {
-				itemTrait.setValueInt(Integer.valueOf(value));
+				int valueInt;
+				try {
+					valueInt = Integer.valueOf(value);
+				} catch (NumberFormatException e) {
+					return Optional.empty();
+				}
+				if (valueInt < trait.getMinValue() 
+						|| valueInt > trait.getMaxValue()) {
+					return Optional.empty();
+				}
+				itemTrait.setValueInt(valueInt);
 			} catch (NumberFormatException e) {
 				return Optional.empty();
 			}
@@ -67,6 +80,8 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			return Optional.empty();
 		}
 		try {
+			itemTrait.setItem(itemRepo.findById(itemTrait.getId().getItemID()).get());
+			itemTrait.setTrait(traitRepo.findById(itemTrait.getId().getTraitID()).get());
 			itemTrait = saveAndFlush(itemTrait);
 		} catch (Exception e) {
 			return Optional.empty();

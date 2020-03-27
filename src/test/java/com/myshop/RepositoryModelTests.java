@@ -275,12 +275,12 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		} else if (!isSearchable.equals(other.isSearchable()))
 			return false;
 		if (maxValue == null) {
-			if (other.getMaxValue() != null)
+			if (other.getMaxValueOrNull() != null)
 				return false;
 		} else if (!maxValue.equals(other.getMaxValue()))
 			return false;
 		if (minValue == null) {
-			if (other.getMinValue() != null)
+			if (other.getMinValueOrNull() != null)
 				return false;
 		} else if (!minValue.equals(other.getMinValue()))
 			return false;
