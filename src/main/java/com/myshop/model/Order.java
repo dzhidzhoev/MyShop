@@ -43,68 +43,79 @@ public class Order {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public Order setId(int id) {
 		this.id = id;
+		return this;
 	}
 	public User getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public Order setUser(User user) {
 		this.user = user;
+		return this;
 	}
 	public Timestamp getOrderTime() {
 		return orderTime;
 	}
-	public void setOrderTime(Timestamp orderTime) {
+	public Order setOrderTime(Timestamp orderTime) {
 		this.orderTime = orderTime;
+		return this;
 	}
 	public String getDeliveryTime() {
 		return deliveryTime;
 	}
-	public void setDeliveryTime(String deliveryTime) {
+	public Order setDeliveryTime(String deliveryTime) {
 		this.deliveryTime = deliveryTime;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Order setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public String getPhone() {
 		return phone;
 	}
-	public void setPhone(String phone) {
+	public Order setPhone(String phone) {
 		this.phone = phone;
+		return this;
 	}
 	public String getEmail() {
 		return email;
 	}
-	public void setEmail(String email) {
+	public Order setEmail(String email) {
 		this.email = email;
+		return this;
 	}
 	public String getAddress() {
 		return address;
 	}
-	public void setAddress(String address) {
+	public Order setAddress(String address) {
 		this.address = address;
+		return this;
 	}
 	public String getComment() {
 		return comment;
 	}
-	public void setComment(String comment) {
+	public Order setComment(String comment) {
 		this.comment = comment;
+		return this;
 	}
 	public OrderStatus getStatus() {
 		return status;
 	}
-	public void setStatus(OrderStatus status) {
+	public Order setStatus(OrderStatus status) {
 		this.status = status;
+		return this;
 	}
 	public int getTotal() {
 		return total;
 	}
-	public void setTotal(int total) {
+	public Order setTotal(int total) {
 		this.total = total;
+		return this;
 	}
 	
 	@Override
