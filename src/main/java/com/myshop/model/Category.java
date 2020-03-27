@@ -40,27 +40,30 @@ public class Category {
 		return id;
 	}
 	
-	public void setId(int id) {
+	public Category setId(int id) {
 		this.id = id;
+		return this;
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public void setName(String name) {
+	public Category setName(String name) {
 		if (name == null) {
 			throw new NullPointerException("name cannot be null");
 		}
 		this.name = name;
+		return this;
 	}
 	
 	public Boolean isActive() {
 		return isActive;
 	}
 	
-	public void setActive(boolean isActive) {
+	public Category setActive(boolean isActive) {
 		this.isActive = isActive;
+		return this;
 	}
 
 	@Override

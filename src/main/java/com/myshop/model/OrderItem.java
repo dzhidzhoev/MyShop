@@ -76,26 +76,30 @@ public class OrderItem {
 	public Order getOrder() {
 		return order;
 	}
-	public void setOrder(Order order) {
+	public OrderItem setOrder(Order order) {
 		this.order = order;
+		return this;
 	}
 	public Item getItem() {
 		return item;
 	}
-	public void setItem(Item item) {
+	public OrderItem setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	public Integer getPrice() {
 		return price;
 	}
-	public void setPrice(Integer price) {
+	public OrderItem setPrice(Integer price) {
 		this.price = price;
+		return this;
 	}
 	public Integer getCount() {
 		return count;
 	}
-	public void setCount(Integer count) {
+	public OrderItem setCount(Integer count) {
 		this.count = count;
+		return this;
 	}
 	@Override
 	public int hashCode() {

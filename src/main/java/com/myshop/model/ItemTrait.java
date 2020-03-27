@@ -89,30 +89,25 @@ public class ItemTrait {
 	public String getValue() {
 		return value;
 	}
-	public void setValue(String value) {
+	public ItemTrait setValue(String value) {
 		this.value = value;
+		return this;
 	}
 	public Integer getValueInt() {
 		return valueInt;
 	}
-	public void setValueInt(Integer valueInt) {
+	public ItemTrait setValueInt(Integer valueInt) {
 		this.valueInt = valueInt;
+		return this;
 	}
 	public Item getItem() {
 		return item;
-	}
-
-	public void setItem(Item item) {
-		this.item = item;
 	}
 
 	public Trait getTrait() {
 		return trait;
 	}
 
-	public void setTrait(Trait trait) {
-		this.trait = trait;
-	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

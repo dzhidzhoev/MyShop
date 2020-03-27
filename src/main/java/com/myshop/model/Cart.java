@@ -78,24 +78,27 @@ public class Cart {
 		return count;
 	}
 	
-	public void setCount(int count) {
+	public Cart setCount(int count) {
 		this.count = count;
+		return this;
 	}
 	
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public Cart setUser(User user) {
 		this.user = user;
+		return this;
 	}
 
 	public Item getItem() {
 		return item;
 	}
 
-	public void setItem(Item item) {
+	public Cart setItem(Item item) {
 		this.item = item;
+		return this;
 	}
 	
 	@Override
