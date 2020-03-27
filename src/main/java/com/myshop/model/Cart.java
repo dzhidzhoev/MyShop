@@ -23,6 +23,14 @@ public class Cart {
 
 		private int userID;
 		private int itemID;
+		
+		public ID() {}
+
+		public ID(int userID, int itemID) {
+			this.userID = userID;
+			this.itemID = itemID;
+		}
+
 
 		public int getItemID() {
 			return itemID;
@@ -73,6 +81,14 @@ public class Cart {
 	
 	@ColumnDefault(value = "1")
 	private int count;
+	
+	public ID getId() {
+		return data;
+	}
+	public Cart setId(ID id) {
+		data = id;
+		return this;
+	}
 
 	public int getCount() {
 		return count;
