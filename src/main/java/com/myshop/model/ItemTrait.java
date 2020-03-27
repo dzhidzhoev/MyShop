@@ -23,6 +23,16 @@ public class ItemTrait {
 
 		private int itemID, traitID;
 		
+		public ID() {}
+		
+		
+		public ID(int itemID, int traitID) {
+			super();
+			this.itemID = itemID;
+			this.traitID = traitID;
+		}
+
+
 		public int getItemID() {
 			return itemID;
 		}
@@ -93,8 +103,8 @@ public class ItemTrait {
 		this.value = value;
 		return this;
 	}
-	public Integer getValueInt() {
-		return valueInt;
+	public int getValueInt() {
+		return valueInt == null ? 0 : valueInt;
 	}
 	public ItemTrait setValueInt(Integer valueInt) {
 		this.valueInt = valueInt;
@@ -107,7 +117,17 @@ public class ItemTrait {
 	public Trait getTrait() {
 		return trait;
 	}
-
+	
+	
+	public ID getId() {
+		return itemTrait;
+	}
+	
+	public ItemTrait setId(ID itemTrait) {
+		this.itemTrait = itemTrait;
+		return this;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
