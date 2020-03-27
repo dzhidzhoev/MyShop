@@ -14,9 +14,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 @Entity
 public class Item {
 	@Id
@@ -40,44 +37,51 @@ public class Item {
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public Item setId(int id) {
 		this.id = id;
+		return this;
 	}
 	public Category getCategory() {
 		return category;
 	}
-	public void setCategory(Category category) {
+	public Item setCategory(Category category) {
 		this.category = category;
+		return this;
 	}
 	public String getName() {
 		return name;
 	}
-	public void setName(String name) {
+	public Item setName(String name) {
 		this.name = name;
+		return this;
 	}
 	public int getPrice() {
 		return price;
 	}
-	public void setPrice(int price) {
+	public Item setPrice(int price) {
 		this.price = price;
+		return this;
 	}
 	public int getCount() {
 		return count;
 	}
-	public void setCount(int count) {
+	public Item setCount(int count) {
 		this.count = count;
+		return this;
 	}
-	public Boolean isActive() {
-		return active;
+	public boolean isActive() {
+		return Boolean.valueOf(true).equals(active);
 	}
-	public void setActive(boolean active) {
+	public Item setActive(boolean active) {
 		this.active = active;
+		return this;
 	}
 	public String getDescription() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public Item setDescription(String description) {
 		this.description = description;
+		return this;
 	}
 	
 	@Override

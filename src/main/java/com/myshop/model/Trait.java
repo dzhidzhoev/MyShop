@@ -1,6 +1,7 @@
 package com.myshop.model;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
@@ -47,13 +46,8 @@ public class Trait {
 	@Column(name = "Values", columnDefinition = "string[]")
 	private List<String> values;
 	private String unit;
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "CategoryTrait", joinColumns = {
-			@JoinColumn(name = "TraitID")
-	}, inverseJoinColumns = {
-			@JoinColumn(name = "CategoryID")
-	})
-	private List<Category> categories;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "trait")
+	private Set<CategoryTrait> categories;
 	
 	public String getName() {
 		return name;

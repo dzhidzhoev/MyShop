@@ -2,9 +2,7 @@ package com.myshop.repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
@@ -14,7 +12,6 @@ import com.myshop.model.TypeEnum;
 
 @Repository
 public interface TraitRepository extends JpaRepository<Trait, Integer> {
-	public Set<Trait> findTraitsByCategories_Id(int categoryId);
 	
 	public default Pair<Optional<Trait>, String> addOrUpdateTrait(Integer id, String name, boolean isSearchable, TypeEnum type, Integer minValue, Integer maxValue, List<String> values, String unit) {
 		if (name == null || name.trim().isEmpty()) {

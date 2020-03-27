@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 import com.myshop.repository.CartRepository;
 import com.myshop.repository.CategoryRepository;
+import com.myshop.repository.CategoryTraitRepository;
 import com.myshop.repository.ItemRepository;
 import com.myshop.repository.ItemTraitRepository;
 import com.myshop.repository.OrderItemRepository;
@@ -28,6 +29,7 @@ public class MyShopDBValidaitonTest extends AbstractTestNGSpringContextTests {
 	@Autowired ItemTraitRepository itemTraitRepo;
 	@Autowired CartRepository cartRepo;
 	@Autowired OrderItemRepository orderItemRepo;
+	@Autowired CategoryTraitRepository catTraitRepo;
 	
 	@Test
 	public void contextLoads() {
@@ -39,5 +41,6 @@ public class MyShopDBValidaitonTest extends AbstractTestNGSpringContextTests {
 		assertNotNull(itemTraitRepo);
 		assertNotNull(cartRepo);
 		assertNotNull(orderItemRepo);
+		assertNotNull(catTraitRepo);
 	}
 }

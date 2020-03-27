@@ -4,21 +4,29 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
+import com.myshop.model.CategoryTrait;
 import com.myshop.model.Trait;
 import com.myshop.model.TypeEnum;
+import com.myshop.repository.CategoryRepository;
+import com.myshop.repository.CategoryTraitRepository;
 import com.myshop.repository.TraitRepository;
 
 @SpringBootTest
 @TestPropertySource(value = "classpath:test.properties")
 public class TraitRepositoryTests extends AbstractTestNGSpringContextTests {
 	@Autowired TraitRepository traitRepo;
+	@Autowired CategoryRepository catRepo;
+	@Autowired CategoryTraitRepository catTraitRepo;
 	
 	@Test
 	public void addNewTraitTest() {
@@ -247,5 +255,22 @@ public class TraitRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertTrue(traitRepo.findById(TRAIT_ID).isPresent());
 		traitRepo.deleteById(TRAIT_ID);
 		assertFalse(traitRepo.findById(TRAIT_ID).isPresent());
+	}
+
+	@Test
+	@Transactional
+	public void categoryTraitCRUDTest() {
+		var CATEGORY_ID = 2;
+		var cat = catRepo.findById(CATEGORY_ID).get();
+		assertEquals(cat.getName(), "Проигрыватели");
+		assertEquals(catTraitRepo.findByCategoryId(CATEGORY_ID).size(), 3);
+		catTraitRepo.deleteByCategoryIdAndTraitId(CATEGORY_ID, 1);
+		assertEquals(catTraitRepo.findByCategoryId(CATEGORY_ID).size(), 3);
+		catTraitRepo.deleteByCategoryIdAndTraitId(CATEGORY_ID, 3);
+		var nt = catTraitRepo.findByCategoryId(CATEGORY_ID).stream().map(CategoryTrait::getTrait).map(Trait::getId).sorted().toArray();
+		assertTrue(Arrays.deepEquals(nt, new Integer[] {6, 7}));
+		catTraitRepo.addTraitToCategory(CATEGORY_ID, 3);
+		assertTrue(Arrays.deepEquals(catTraitRepo.findByCategoryId(CATEGORY_ID).stream().map(CategoryTrait::getTrait).map(Trait::getId).sorted().toArray(),
+				new Integer[] {3, 6, 7}));
 	}
 }

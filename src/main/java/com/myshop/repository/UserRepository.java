@@ -2,7 +2,6 @@ package com.myshop.repository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,7 +9,6 @@ import java.util.UUID;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.DatatypeConverter;
 
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.util.Pair;
 import org.springframework.lang.NonNull;

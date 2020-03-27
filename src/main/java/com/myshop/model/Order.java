@@ -18,8 +18,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.FetchMode;
-
 @Entity
 @Table(name = "OrderTable")
 public class Order {
