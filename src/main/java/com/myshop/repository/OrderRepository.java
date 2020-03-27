@@ -64,4 +64,28 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
 		}
 	}
+	
+	public default Pair<Optional<Order>, String> updateOrderDetails(Order order,
+			String deliveryTime, String name, String phone, 
+			String email, String address, String comment, int total) {
+		if (name == null || name.trim().isEmpty()) {
+			return Pair.of(Optional.empty(), "name is not set");
+		}
+		if (address == null || address.trim().isEmpty()) {
+			return Pair.of(Optional.empty(), "address is not set");
+		}
+		name = name.trim();
+		address = address.trim();
+		if (comment == null) {
+			comment = "";
+		}
+		try {
+			order = saveAndFlush(order.setDeliveryTime(deliveryTime)
+					.setName(name).setEmail(email).setPhone(phone)
+					.setAddress(address).setComment(comment));
+		} catch (Exception e) {
+			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
+		}
+		return Pair.of(Optional.of(order), "ok");
+	}
 }
