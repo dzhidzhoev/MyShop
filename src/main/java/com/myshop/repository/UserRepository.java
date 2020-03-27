@@ -2,6 +2,7 @@ package com.myshop.repository;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -99,7 +100,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		}
 	}
 	
-	public default Pair<Optional<User>, String> registerUser(String lastName, String firstName, String middleName, 
+	public default Pair<Optional<User>, String> registerUser(Integer id, String lastName, String firstName, String middleName, 
 			String phoneNumber, String address, String email, String password) {
 		if (lastName == null) {
 			lastName = "";
@@ -134,7 +135,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		if (password.isEmpty() || !isPasswordValid(password)) {
 			return Pair.of(Optional.empty(), "password is empty");
 		}
-		if (findByEmailIgnoreCase(email).isPresent()) {
+		if (findByEmailIgnoreCase(email).isPresent() && id == null) {
 			return Pair.of(Optional.empty(), "email has been used already");
 		}
 		var user = new User().setLastName(lastName)
@@ -145,9 +146,12 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 				.setEmail(email)
 				.setPwdHash(getPasswordHash(password))
 				.setEmailToken(UUID.randomUUID().toString());
+		if (id != null) {
+			user.setId(id);
+		}
 		try {
-			saveAndFlush(user);
-		} catch (DataAccessException e) {
+			user = saveAndFlush(user);
+		} catch (Exception e) {
 			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
 		}
 		

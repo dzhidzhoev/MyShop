@@ -15,6 +15,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -168,12 +170,19 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		return res;
 	}
 
-	public void registerUserTestEmail(String lastName, String firstName, String middleName, 
+	public Integer registerUserTestEmail(Integer id, String lastName, String firstName, String middleName, 
 			String phoneNumber, String address, String email, String password,
 			String lastNameRes, String firstNameRes, String middleNameRes, 
 			String phoneNumberRes, String addressRes, String emailRes, String passwordRes, boolean good) {
-		var userRes = userRepo.registerUser(lastName, firstName, middleName, phoneNumber, address, email, password);
-		if (userRes.getFirst().isPresent()) {
+		return registerUserTestEmail(true, id, lastName, firstName, middleName, phoneNumber, address, email, password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, emailRes, passwordRes, good);
+	}
+	
+	public Integer registerUserTestEmail(boolean delete, Integer id, String lastName, String firstName, String middleName, 
+			String phoneNumber, String address, String email, String password,
+			String lastNameRes, String firstNameRes, String middleNameRes, 
+			String phoneNumberRes, String addressRes, String emailRes, String passwordRes, boolean good) {
+		var userRes = userRepo.registerUser(id, lastName, firstName, middleName, phoneNumber, address, email, password);
+		if (userRes.getFirst().isPresent() && delete) {
 			userRepo.deleteById(userRes.getFirst().get().getId());
 			userRepo.flush();
 		}
@@ -188,7 +197,9 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 			assertEquals(user.getAddress(), addressRes);
 			assertEquals(user.getEmail(), emailRes);
 			assertEquals(user.getPwdHash(), passwordRes);
+			return userRes.getFirst().get().getId();
 		}
+		return null;
 	}
 	
 	@Test(dataProvider = "register")
@@ -197,18 +208,50 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 			String lastNameRes, String firstNameRes, String middleNameRes, 
 			String phoneNumberRes, String addressRes, String passwordRes, boolean good) {
 		// all ok
-		registerUserTestEmail(lastName, firstName, middleName, phoneNumber, address, "100@100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
+		registerUserTestEmail(null, lastName, firstName, middleName, phoneNumber, address, "100@100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
 		// spaces
-		registerUserTestEmail(lastName, firstName, middleName, phoneNumber, address, "   100@100.com\t", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
+		registerUserTestEmail(null, lastName, firstName, middleName, phoneNumber, address, "   100@100.com\t", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
 		// invalid
-		registerUserTestEmail(lastName, firstName, middleName, phoneNumber, address, "100100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
-		registerUserTestEmail(lastName, firstName, middleName, phoneNumber, address, "", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
-		registerUserTestEmail(lastName, firstName, middleName, phoneNumber, address, null, password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		registerUserTestEmail(null, lastName, firstName, middleName, phoneNumber, address, "100100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		registerUserTestEmail(null, lastName, firstName, middleName, phoneNumber, address, "", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		registerUserTestEmail(null, lastName, firstName, middleName, phoneNumber, address, null, password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
 		// already used
-		registerUserTestEmail(lastName, firstName, middleName, phoneNumber, address, "1@1.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		registerUserTestEmail(null, lastName, firstName, middleName, phoneNumber, address, "1@1.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
 		// check all deleted
-		Arrays.deepEquals(userRepo.findAll(Sort.by(Order.asc("email"))).toArray(),
-					new String[] {"1@1.com", "2@2.com", "3@3.com"});
+		var users = userRepo.findAll(Sort.by(Order.asc("email"))).stream().map(User::getEmail).toArray();
+		assertTrue(Arrays.deepEquals(users,
+					new String[] {"1@1.com", "2@1.com", "3@1.com"}));
+	}
+	
+	@Test(dataProvider = "register")
+	public void updateUserTest(String lastName, String firstName, String middleName, 
+			String phoneNumber, String address, String password,
+			String lastNameRes, String firstNameRes, String middleNameRes, 
+			String phoneNumberRes, String addressRes, String passwordRes, boolean good) {
+		assertFalse(userRepo.findByEmailIgnoreCase("5@5.com").isPresent());
+		final int UPDATE_USER_ID = registerUserTestEmail(false, null, "Ivanov", "Ivan", null, null, null, "5@5.com", "goodpwd100", "Ivanov", "Ivan", null, null, null, "5@5.com", userRepo.getPasswordHash("goodpwd100"), true);
+		assertTrue(userRepo.findById(UPDATE_USER_ID).isPresent());
+
+		// all ok
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100@100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
+		// spaces
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "   100@100.com\t", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
+		// invalid
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, null, password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, passwordRes, false);
+		// already used
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100@100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
+		
+		var users = userRepo.findAll(Sort.by(Order.asc("email"))).stream().map(User::getEmail).toArray();
+		var expected = new String[] {"1@1.com", "2@1.com", "3@1.com", userRepo.findById(UPDATE_USER_ID).get().getEmail()};
+		Arrays.sort(expected);
+		var eq = Arrays.deepEquals(users, expected);
+		assertTrue(eq);
+		
+		userRepo.delete(userRepo.findById(UPDATE_USER_ID).get());
+		userRepo.flush();
+		assertFalse(userRepo.findById(UPDATE_USER_ID).isPresent());
 	}
 	
 	@Test

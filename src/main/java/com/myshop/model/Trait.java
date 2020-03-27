@@ -54,50 +54,58 @@ public class Trait {
 	public String getName() {
 		return name;
 	}
-	public void setName(String text) {
+	public Trait setName(String text) {
 		this.name = text;
+		return this;
 	}
 	public TypeEnum getType() {
 		return type;
 	}
-	public void setType(TypeEnum type) {
+	public Trait setType(TypeEnum type) {
 		this.type = type;
+		return this;
 	}
 	public Boolean isSearchable() {
 		return isSearchable;
 	}
-	public void setSearchable(boolean isSearchable) {
+	public Trait setSearchable(boolean isSearchable) {
 		this.isSearchable = isSearchable;
+		return this;
 	}
 	public Integer getMinValue() {
 		return minValue;
 	}
-	public void setMinValue(Integer minValue) {
+	public Trait setMinValue(Integer minValue) {
 		this.minValue = minValue;
+		return this;
 	}
 	public String getUnit() {
 		return unit;
 	}
-	public void setUnit(String unit) {
+	public Trait setUnit(String unit) {
 		this.unit = unit;
+		return this;
 	}
 	public Integer getMaxValue() {
 		return maxValue;
 	}
-	public void setMaxValue(Integer maxValue) {
+	public Trait setMaxValue(Integer maxValue) {
 		this.maxValue = maxValue;
+		return this;
 	}
 	public List<String> getValues() {
 		return values;
 	}
-	public void setValues(List<String> values) {
+	public Trait setValues(List<String> values) {
 		this.values = values;
+		return this;
 	}
 	public int getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public Trait setId(int id) {
 		this.id = id;
+		return this;
 	}
 	@Override
 	public int hashCode() {
