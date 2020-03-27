@@ -15,8 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -84,11 +82,11 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertFalse(userRepo.isPasswordValid(""));
 	}
 	
-	private static class Suit<T> {
+	private static class Suite<T> {
 		T val;
 		T result;
 		boolean good;
-		public Suit(T val, T result, boolean good) {
+		public Suite(T val, T result, boolean good) {
 			super();
 			this.val = val;
 			this.result = result;
@@ -96,7 +94,7 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		}
 	}
 	
-	private void fillInternal(ArrayList<Integer> choice, List<List<Suit<? extends Object>>> vals,
+	private void fillInternal(ArrayList<Integer> choice, List<List<Suite<? extends Object>>> vals,
 			ArrayList<ArrayList<Object>> res) {
 		if (choice.size() == vals.size()) {
 			boolean result = true;
@@ -124,7 +122,7 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		}
 	}
 	
-	protected void fill(List<List<Suit<? extends Object>>> vals,
+	protected void fill(List<List<Suite<? extends Object>>> vals,
 			ArrayList<ArrayList<Object>> res) {
 		fillInternal(new ArrayList<>(), vals, res);
 	}
@@ -132,27 +130,27 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 	@DataProvider(name = "register")
 	public Object[][] generateRegisterTestData() {
 		var names = Lists.list(
-				new Suit<>(null, null, false),
-				new Suit<>("", "", false),
-				new Suit<>("Иванов", "Иванов", true),
-				new Suit<>("    Ivanov  ", "Ivanov", true));
+				new Suite<>(null, null, false),
+				new Suite<>("", "", false),
+				new Suite<>("Иванов", "Иванов", true),
+				new Suite<>("    Ivanov  ", "Ivanov", true));
 		var firstNames = names;
 		var lastNames = names;
 		var middleNames = Lists.list(
-				new Suit<>(null, null, true),
-				new Suit<>("", "", true),
-				new Suit<>("Иванов", "Иванов", true),
-				new Suit<>("    Ivanov  ", "Ivanov", true));
+				new Suite<>(null, null, true),
+				new Suite<>("", "", true),
+				new Suite<>("Иванов", "Иванов", true),
+				new Suite<>("    Ivanov  ", "Ivanov", true));
 		var valNull = Lists.list(
-				new Suit<>(null, null, true),
-				new Suit<>("val", "val", true));
+				new Suite<>(null, null, true),
+				new Suite<>("val", "val", true));
 		var phoneNumber = valNull;
 		var address = valNull;
 		var password = Lists.list(
-				new Suit<>(null, null, false),
-				new Suit<>("", "", false),
-				new Suit<>("1", null, false),
-				new Suit<>("abcdef123", userRepo.getPasswordHash("abcdef123"), true));
+				new Suite<>(null, null, false),
+				new Suite<>("", "", false),
+				new Suite<>("1", null, false),
+				new Suite<>("abcdef123", userRepo.getPasswordHash("abcdef123"), true));
 		var before = Lists.list(
 			lastNames,
 			firstNames,

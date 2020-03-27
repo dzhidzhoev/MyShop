@@ -16,16 +16,18 @@ import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
 
 @Entity
 @TypeDef(name = "list-array",
 		typeClass = ListArrayType.class)
+@TypeDef(name = "pgsql_enum",
+	    typeClass = PostgreSQLEnumType.class
+)
 public class Trait {
 	@Id
 	@SequenceGenerator(name = "Trait_TraitID_seq", allocationSize = 1)
@@ -37,6 +39,8 @@ public class Trait {
 	private Boolean isSearchable;
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Column(columnDefinition = "TypeEnum")
+	@Type(type = "pgsql_enum")
 	private TypeEnum type;
 	private Integer minValue, maxValue;
 	@Type(type = "list-array")

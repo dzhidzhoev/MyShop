@@ -16,7 +16,7 @@ import com.myshop.model.TypeEnum;
 public interface TraitRepository extends JpaRepository<Trait, Integer> {
 	public Set<Trait> findTraitsByCategories_Id(int categoryId);
 	
-	public default Pair<Optional<Trait>, String> addNewTrait(String name, boolean isSearchable, TypeEnum type, Integer minValue, Integer maxValue, List<String> values, String unit) {
+	public default Pair<Optional<Trait>, String> addOrUpdateTrait(Integer id, String name, boolean isSearchable, TypeEnum type, Integer minValue, Integer maxValue, List<String> values, String unit) {
 		if (name == null || name.trim().isEmpty()) {
 			return Pair.of(Optional.empty(), "empty name");
 		}
@@ -53,9 +53,12 @@ public interface TraitRepository extends JpaRepository<Trait, Integer> {
 				.setMaxValue(maxValue)
 				.setValues(values)
 				.setUnit(unit);
+		if (id != null) {
+			trait.setId(id);
+		}
 		try {
 			trait = saveAndFlush(trait);
-		} catch (DataAccessException e) {
+		} catch (Exception e) {
 			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
 		}
 		return Pair.of(Optional.of(trait), "ok");
