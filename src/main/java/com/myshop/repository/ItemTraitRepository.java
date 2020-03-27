@@ -11,8 +11,8 @@ import com.myshop.model.Trait;
 public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.ID> {
 	public Set<ItemTrait> findByItemId(int itemId);
 	
-	public default String toString(ItemTrait itemTrait, TraitRepository traitRepo) {
-		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getTrait().getId());
+	public default String getValue(ItemTrait itemTrait, TraitRepository traitRepo) {
+		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getId().getTraitID());
 		if (traitRes.isPresent()) {
 			Trait trait = traitRes.get();
 			switch (trait.getType()) {
