@@ -16,7 +16,7 @@ public class OrderItem {
 	public static class ID implements Serializable {
 		private static final long serialVersionUID = -754941172640009098L;
 		
-		private int orderID, itemID;
+		public int orderID, itemID;
 
 		public int getOrderID() {
 			return orderID;
@@ -30,8 +30,8 @@ public class OrderItem {
 			return itemID;
 		}
 
-		public void setItemID(int priceID) {
-			this.itemID = priceID;
+		public void setItemID(int itemID) {
+			this.itemID = itemID;
 		}
 
 		@Override
@@ -60,7 +60,7 @@ public class OrderItem {
 		}
 	}
 	
-	@EmbeddedId private ID itemTrait;
+	@EmbeddedId private ID itemTrait = new ID();
 	
 	@ManyToOne
 	@MapsId("orderID")
@@ -100,6 +100,9 @@ public class OrderItem {
 	public OrderItem setCount(Integer count) {
 		this.count = count;
 		return this;
+	}
+	public ID getId() {
+		return itemTrait;
 	}
 	@Override
 	public int hashCode() {

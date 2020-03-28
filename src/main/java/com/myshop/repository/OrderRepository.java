@@ -6,13 +6,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.persistence.Persistence;
+import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.myshop.model.Cart;
@@ -26,7 +27,11 @@ import com.myshop.model.User;
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 	public Set<Order> findByUserId(int userId);
 	public List<Order> findByUserId(int userId, Pageable page);
+	@Query(value = "SELECT UserID FROM OrderTable WHERE OrderID = :order",
+			nativeQuery = true)
+	public int findUserIdById(@Param("order") int orderId);
 	
+	@Transactional
 	public default Pair<Optional<Order>, String> placeNewOrder(User user, CartRepository cartRepo, ItemRepository itemRepo, OrderItemRepository orderItemRepo) {
 		Set<Cart> items = cartRepo.findByUserId(user.getId());
 		if (items.isEmpty()) {
@@ -50,10 +55,13 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 			var orderItems = items.stream().map(cartItem -> {
 				OrderItem orderItem = new OrderItem();
 				var item = itemRepo.findById(cartItem.getId().getItemID()).get();
-				orderItem.setOrder(order)
+				orderItem
+					.setOrder(order)
 					.setItem(item)
 					.setPrice(item.getPrice())
 					.setCount(cartItem.getCount());
+				orderItem.getId().setItemID(item.getId());
+				orderItem.getId().setOrderID(order.getId());
 				return orderItem;
 			}).collect(Collectors.toSet());
 			orderItemRepo.saveAll(orderItems);
@@ -76,12 +84,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 		}
 		name = name.trim();
 		address = address.trim();
-		if (comment == null) {
-			comment = "";
-		}
 		try {
 			order = saveAndFlush(order.setDeliveryTime(deliveryTime)
 					.setName(name).setEmail(email).setPhone(phone)
+					.setTotal(total)
 					.setAddress(address).setComment(comment));
 		} catch (Exception e) {
 			return Pair.of(Optional.empty(), "unknown exception " + e.toString());

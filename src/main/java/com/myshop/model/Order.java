@@ -18,8 +18,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+
+import com.vladmihalcea.hibernate.type.basic.PostgreSQLEnumType;
+
 @Entity
 @Table(name = "OrderTable")
+@TypeDef(name = "pgsql_enum",
+typeClass = PostgreSQLEnumType.class
+)
 public class Order {
 	@Id
 	@Column(name = "OrderID", unique = true, nullable = false)
@@ -34,6 +42,7 @@ public class Order {
 	private String name, phone, email, address, comment;
 	@NotNull
 	@Enumerated(EnumType.STRING)
+	@Type(type = "pgsql_enum")
 	private OrderStatus status;
 	@NotNull
 	private int total;
