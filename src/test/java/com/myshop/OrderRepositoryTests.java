@@ -20,6 +20,7 @@ import org.testng.collections.Lists;
 import com.myshop.model.Cart;
 import com.myshop.model.Cart.ID;
 import com.myshop.model.CategoryTrait;
+import com.myshop.model.Order;
 import com.myshop.model.OrderStatus;
 import com.myshop.model.Trait;
 import com.myshop.model.TypeEnum;
@@ -121,21 +122,23 @@ public class OrderRepositoryTests extends AbstractTestNGSpringContextTests {
 			for (var phone: Lists.newArrayList(null, "some phone", "")) {
 				for (var email: Lists.newArrayList(null, "some email", "")) {
 					for (var comment: Lists.newArrayList(null, "some comment", "")) {
-						for (var total: Lists.newArrayList(0, 1, 2)) {
-							var newOrder = orderRepo.updateOrderDetails(order, "some time", "some name", "some phone", "some email", "some address", "some comment", 100).getFirst().get();
+						for (int total: Lists.newArrayList(0, 1, 2)) {
+							order = orderRepo.updateOrderDetails(order, time, "some name", phone, email, "some address", comment, total).getFirst().get();
 							assertEquals(order.getId(), orderId);
 							assertEquals(order.getName(), "some name");
 							assertEquals(order.getAddress(), "some address");
-							assertEquals(order.getDeliveryTime(), "some time");
-							assertEquals(order.getPhone(), "some phone");
-							assertEquals(order.getComment(), "some comment");
-							assertEquals(order.getTotal(), 100);
-							orderRepo.delete(newOrder);
-							assertEquals(orderRepo.count(), 3);
+							assertEquals(order.getDeliveryTime(), time);
+							assertEquals(order.getPhone(), phone);
+							assertEquals(order.getComment(), comment);
+							assertEquals(order.getEmail(), email);
+							assertEquals(order.getTotal(), total);
 						}
 					}
 				}
 			}
 		}
+		orderRepo.delete(order);
+		orderRepo.flush();
+		assertEquals(orderRepo.count(), 3);
 	}
 }
