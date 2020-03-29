@@ -13,7 +13,7 @@ import com.myshop.model.Category;
 import com.myshop.model.Item;
 
 @Repository
-public interface ItemRepository extends JpaRepository<Item, Integer> {
+public interface ItemRepository extends JpaRepository<Item, Integer>, ItemRepositoryCustom {
 	public Set<Item> findItemsByCategoryId(int categoryId);
 	public List<Item> findItemsByCategoryId(int categoryId, Pageable page);
 	

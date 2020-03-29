@@ -4,15 +4,20 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
-
+import org.testng.collections.Lists;
 import com.myshop.model.Item;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.ItemRepository;
+import com.myshop.repository.ItemRepositoryCustom;
+import com.myshop.repository.ItemRepositoryCustom.Term.TermType;
 import com.myshop.repository.ItemTraitRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.TraitRepository;
@@ -98,5 +103,71 @@ public class ItemRepositoryTests extends AbstractTestNGSpringContextTests {
 		itemRepo.delete(item);
 		itemRepo.flush();
 		assertEquals(itemRepo.findAll().size(), 4);
+	}
+	
+	@Test
+	public void filterTest() {
+		assertEquals(itemRepo.findAll().size(), 4);
+		var category = catRepo.findById(1).get();
+		var trait3 = traitRepo.findById(3).get();
+		var trait4 = traitRepo.findById(4).get();
+		var category2 = catRepo.findById(2).get();
+		var trait6 = traitRepo.findById(6).get();
+		// empty
+		assertTrue(itemRepo.findItemsByTerms(category, Lists.newArrayList()).isEmpty());
+		
+		// no trait
+		var res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, traitRepo.findById(7).get(), Set.of(), 0, 10000)));
+		assertEquals(res.size(), 0);
+		
+		// between ok
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 200)));
+		assertEquals(res.size(), 1);
+		assertEquals(res.stream().findAny().get().getId(), 1);
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50)));
+		assertEquals(res.size(), 1);
+		assertEquals(res.stream().findAny().get().getId(), 1);
+		// between not ok
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 49)));
+		assertEquals(res.size(), 0);
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 51, 10000)));
+		assertEquals(res.size(), 0);
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 100, 0)));
+		assertEquals(res.size(), 0);
+		
+		// one of not ok
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "something cool"), 100, 0)));
+		assertEquals(res.size(), 0);
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("something cool"), 100, 0)));
+		assertEquals(res.size(), 0);
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of(), 100, 0)));
+		assertEquals(res.size(), 0);
+		
+		// one of ok
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "Bluray", "something cool"), 50, 50)));
+		assertEquals(res.size(), 1);
+		assertEquals(res.stream().findAny().get().getId(), 3);
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "Bluray"), 50, 50)));
+		assertEquals(res.size(), 1);
+		assertEquals(res.stream().findAny().get().getId(), 3);
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("Bluray"), 50, 50)));
+		assertEquals(res.size(), 1);
+		assertEquals(res.stream().findAny().get().getId(), 3);
+		
+		// two between not ok
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 49),
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 0, 1000)));
+		assertEquals(res.size(), 0);
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50),
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 151, 1000)));
+		assertEquals(res.size(), 0);
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 20),
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 151, 1000)));
+		assertEquals(res.size(), 0);
+		// two between ok
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50),
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 0, 1000)));
+		assertEquals(res.size(), 1);
+		assertEquals(res.stream().findAny().get().getId(), 1);
 	}
 }

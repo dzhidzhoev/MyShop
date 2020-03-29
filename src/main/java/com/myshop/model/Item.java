@@ -34,6 +34,9 @@ public class Item {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
 	private Set<ItemTrait> traits;
 	
+	public Set<ItemTrait> getTraits() {
+		return traits;
+	}
 	public int getId() {
 		return id;
 	}
