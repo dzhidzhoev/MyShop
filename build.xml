@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- ====================================================================== -->
+<!-- Ant build file (http://ant.apache.org/) for Ant 1.6.2 or above.        -->
+<!-- ====================================================================== -->
+
+<project name="MyShop" default="package" basedir=".">
+
+	<!-- ====================================================================== -->
+	<!-- Import maven-build.xml into the current project                        -->
+	<!-- ====================================================================== -->
+
+	<import file="maven-build.xml" />
+
+	<!-- ====================================================================== -->
+	<!-- Help target                                                            -->
+	<!-- ====================================================================== -->
+
+	<target name="help">
+		<echo message="Please run: $ant -projecthelp" />
+	</target>
+
+	<target name="drop">
+		<sql driver="${db.driver}" url="${db.url}" userid="${db.user}" password="${db.pw}" onerror="continue">
+			<transaction src="src/test/resources/drop.sql" />
+		</sql>
+		<sql driver="${db.driver}" url="${db.test_url}" userid="${db.user}" password="${db.pw}" onerror="continue">
+			<transaction src="src/test/resources/drop.sql" />
+		</sql>
+	</target>
+
+	<target name="create">
+		<sql driver="${db.driver}" url="${db.url}" userid="${db.user}" password="${db.pw}" onerror="continue">
+			<transaction src="src/test/resources/schema.sql" />
+		</sql>
+		<sql driver="${db.driver}" url="${db.test_url}" userid="${db.user}" password="${db.pw}" onerror="continue">
+			<transaction src="src/test/resources/schema.sql" />
+		</sql>
+	</target>
+
+	<target name="fill">
+		<sql driver="${db.driver}" url="${db.url}" userid="${db.user}" password="${db.pw}">
+			<transaction src="src/test/resources/data.sql" />
+		</sql>
+		<sql driver="${db.driver}" url="${db.test_url}" userid="${db.user}" password="${db.pw}">
+			<transaction src="src/test/resources/data.sql" />
+		</sql>
+	</target>
+	
+	<taskdef name="testng" classname="org.testng.TestNGAntTask">
+		<classpath location="${maven.repo.local}/org/testng/testng/6.10/testng-6.10.jar" />
+	</taskdef>
+	<target name="test" 
+	          depends="compile-tests" 
+	          description="Run the TestNG test cases">
+	    <mkdir dir="${maven.test.reports}"/>
+	    <testng haltonfailure="true">
+	      <sysproperty key="basedir" value="."/>
+	      <classpath>
+	        <path refid="build.test.classpath"/>
+	        <pathelement location="${maven.build.outputDir}"/>
+	        <pathelement location="${maven.build.testOutputDir}"/>
+	      </classpath>
+	        <classfileset dir="${maven.build.testOutputDir}" includes="**/*Test*.class" />
+	    </testng>
+	  </target>
+
+</project>

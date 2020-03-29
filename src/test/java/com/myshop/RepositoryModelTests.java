@@ -348,7 +348,7 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertEquals(bluray.getItem().getId(), 3);
 		assertEquals(bluray.getTrait().getId(), 6);
 		assertEquals(bluray.getValue(), "Bluray");
-		assertEquals(bluray.getValueInt(), null);
+		assertEquals(bluray.getValueInt(), 0);
 	}
 	
 	@Test
