@@ -25,7 +25,7 @@
   </div>
   <button type="submit" class="btn m-2 btn-primary">Войти</button>
 </form>
-<form action="register.php">
+<form action="register">
 	<button type="submit" class="btn m-2 btn-danger">Регистрация нового пользователя</button>
 </form>
 </div>

@@ -1,0 +1,57 @@
+<%@page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<form action="register" method="post">
+  <div class="form-group">
+    <label for="exampleInputEmail1">Фамилия *</label>
+    <input value="${fn:escapeXml(form_lastName)}" name="lastName" type="text" required="required" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите фамилию">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Имя *</label>
+    <input value="${fn:escapeXml(form_firstName)}" name="firstName" type="text" required="required" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите имя">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Отчество</label>
+    <input value="${fn:escapeXml(form_middleName)}" name="middleName" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите отчество (если есть)">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Номер телефона</label>
+    <input value="${fn:escapeXml(form_phoneNumber)}" name="phoneNumber" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите номер телефона">
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Домашний адрес</label>
+    <textarea name="address" class="form-control" id="exampleInputEmail1"
+				aria-describedby="emailHelp"
+				placeholder="Введите полный почтовый адрес и индекс (по желанию)" cols="" rows="">${fn:escapeXml(form_address)}</textarea>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email *</label>
+    <input value="${fn:escapeXml(form_email)}" name="email" type="email" required="required" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите адрес почтового ящика">
+  </div>
+  
+  <c:choose>
+  	<c:when test="${edit_admin == 'true' }">
+  		<div class="form-check">
+	        <input type="checkbox"id="exampleCheck3" autocomplete="off" checked>
+	        <label for="exampleCheck3">Является администратором</label>
+	    </div><p>После обновления перебрасывает в список пользователей<br>
+  	</c:when>
+  	<c:otherwise>	
+	  <div class="form-group">
+	    <label for="exampleInputPassword1">Пароль (минимум 8 символов) *</label>
+	    <input name="password" type="password" required="required" class="form-control" id="exampleInputPassword1" placeholder="Введите пароль">
+	    <input name="password2" type="password" required="required" class="form-control" id="exampleInputPassword2" placeholder="Повторите пароль">
+	    <c:if test="${samePwd != null }">
+	    	<div class="text-danger">Введены разные пароли!</div>
+	    </c:if>
+	  </div>
+  	</c:otherwise>
+  </c:choose>
+  <c:if test="${errorMessage != null }">
+  	<div class="text-danger">Ошибка! ${errorMessage }</div>
+  </c:if>
+  <button type="submit" class="btn m-2 btn-success">
+${action }
+</button>
+</form>

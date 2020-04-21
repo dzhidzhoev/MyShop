@@ -131,7 +131,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 			return Pair.of(Optional.empty(), "not an email");
 		}
 		if (password.isEmpty() || !isPasswordValid(password)) {
-			return Pair.of(Optional.empty(), "password is empty");
+			return Pair.of(Optional.empty(), "password is invalid");
 		}
 		if (findByEmailIgnoreCase(email).isPresent() && id == null) {
 			return Pair.of(Optional.empty(), "email has been used already");
