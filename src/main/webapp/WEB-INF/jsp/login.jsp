@@ -32,7 +32,7 @@
 </div>
 </div>
 
-<c:if test="${param.restored != null }">
+<c:if test="${param.restored != null || param.pwdchanged != null }">
 <div id="restored-toast" data-delay="20000" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
   <div class="toast-header">
     <strong class="mr-auto">MyShop</strong>
@@ -41,7 +41,12 @@
     </button>
   </div>
   <div class="toast-body">
+<c:if test="${param.restored != null}">
    	Вам отправлено письмо с инструкциями
+</c:if>
+<c:if test="${param.pwdchanged != null}">
+	Пароль изменён
+</c:if>
   </div>
 </div>
 <script type="text/javascript">

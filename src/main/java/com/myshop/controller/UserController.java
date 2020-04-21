@@ -106,18 +106,53 @@ public class UserController {
 	}
 	
 	@PostMapping("/forgot")
-	public String restorePassword(Model model, @RequestParam(name = "email") String email) {
+	public String restorePassword(Model model, HttpServletRequest request, @RequestParam(name = "email") String email) throws UnsupportedEncodingException {
 		email = email.trim();
 		if (email.isEmpty()) {
 			model.addAttribute("isEmailEmpty", "true");
 			return "forgot";
 		}
 		var attempt = userRepo.findByEmailIgnoreCase(email);
-		if (attempt.isPresent()) {
+		if (attempt.isPresent() && !attempt.get().isDeleted()) {
 			var user = attempt.get();
 			user.setPwdChangeToken(UUID.randomUUID().toString());
 			userRepo.saveAndFlush(user);
+			
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setTo(user.getEmail());
+			msg.setSubject("Сброс пароля - MyShop");
+			msg.setText("Для сброса своего действующего пароля перейдите по ссылке " +
+					"http://" + request.getLocalName() + "/reset?email=" + URLEncoder.encode(user.getEmail(), "UTF-8") +
+					"&token=" + URLEncoder.encode(user.getPwdChangeToken(), "UTF-8"));
+			msg.setFrom(env.getProperty("spring.mail.username"));
+			mailSender.send(msg);
 		}
+		
 		return "redirect:/login?restored=1";
+	}
+	
+	@GetMapping("/reset")
+	public String showReset() {
+		return "reset";
+	}
+	
+	@PostMapping("/reset")
+	public String doReset(Model model, @RequestParam(name = "email") String email,
+			@RequestParam(name = "token") String token,
+			@RequestParam(name = "password") String password,
+			@RequestParam(name = "password2") String password2) {
+		if (!password.equals(password2)) {
+			model.addAttribute("samePwd", "true");
+			return "reset";
+		}
+		if (!userRepo.isPasswordValid(password)) {
+			model.addAttribute("errorMessage", "Пароль содержит запрещённые символы или имеет длину меньше 8 знаков!");
+			return "reset";
+		}
+		var attempt = userRepo.findByEmailIgnoreCase(email);
+		if (attempt.isPresent()) {
+			userRepo.resetPassword(token, password);
+		}
+		return "redirect:/login?pwdchanged=1";
 	}
 }
