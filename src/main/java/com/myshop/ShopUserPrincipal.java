@@ -15,7 +15,7 @@ public class ShopUserPrincipal implements UserDetails {
 	private User user;
 	
 	public ShopUserPrincipal(User user) {
-		
+		this.user = user;
 	}
 
 	@Override

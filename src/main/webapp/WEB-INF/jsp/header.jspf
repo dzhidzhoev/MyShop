@@ -1,3 +1,4 @@
+<%@page import="org.springframework.web.context.request.RequestScope"%>
 <%@page import="com.myshop.repository.CategoryRepository"%>
 <%@page import="org.springframework.beans.factory.annotation.Autowired"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -27,11 +28,13 @@
     align-item: center;
 }
 </style>
+<c:if test="${isAuthorized && requestScope['javax.servlet.forward.request_uri'] == '/login'}">
+	 <meta http-equiv="refresh" content="0;URL=/profile" />
+</c:if>
 <meta charset="UTF-8">
 <title>MyShop</title>
 </head>
 <body>
-
 	<div class="container">
 		<div class="row">
 			<form action="index.php">
@@ -41,17 +44,18 @@
 	</div>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 		<ul class="navbar-nav mr-auto">
-<%
-if (request.getContextPath().equals("/") || request.getContextPath().equals("index.php")) {
-%>
-			<li class="nav-item active"><a class="nav-link" href="/">Главная</a></li>
-<%
-} else {
-%>
-			<li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
-<%  
-}
-%>
+			<c:choose>
+				<c:when test="requestScope['javax.servlet.forward.request_uri'] == '/'">
+						<li class="nav-item active"><a class="nav-link" href="/">Главная</a></li>
+				</c:when>
+				<c:when test="requestScope['javax.servlet.forward.request_uri'] == ''">
+					<li class="nav-item active"><a class="nav-link" href="/">Главная</a></li>
+				</c:when>
+				<c:otherwise>
+					<li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
+				</c:otherwise>
+			</c:choose>
+			
 			<c:forEach items="${menuCategories}" var="cat">
 				<c:if test="${cat.isActive()}">
 					<li class="nav-item"><a class="nav-link" href="index.php">${cat.getName()}</a></li>
@@ -61,7 +65,7 @@ if (request.getContextPath().equals("/") || request.getContextPath().equals("ind
 		<form action="cart.php">
 		<button class="btn btn-success my-2 my-sm-0 mx-1" type="submit">Корзина</button>
 		</form>
-		<form action="login.php">
+		<form action="login">
 		<button class="btn btn-danger my-2 my-sm-0 mx-1" type="submit">Личный кабинет</button>
 		</form>
 	</nav>
