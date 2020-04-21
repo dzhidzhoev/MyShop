@@ -53,11 +53,7 @@ public interface TraitRepository extends JpaRepository<Trait, Integer> {
 		if (id != null) {
 			trait.setId(id);
 		}
-		try {
-			trait = saveAndFlush(trait);
-		} catch (Exception e) {
-			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
-		}
+		trait = saveAndFlush(trait);
 		return Pair.of(Optional.of(trait), "ok");
 	}
 }

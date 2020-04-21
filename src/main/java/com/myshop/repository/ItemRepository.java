@@ -38,11 +38,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer>, ItemReposi
 		if (id != null) {
 			item.setId(id);
 		}
-		try {
-			item = saveAndFlush(item);
-		} catch (Exception e) {
-			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
-		}
+		item = saveAndFlush(item);
 		return Pair.of(Optional.of(item), "ok");
 	}
 }

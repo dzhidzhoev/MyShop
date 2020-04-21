@@ -69,7 +69,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 			return Pair.of(Optional.of(order), "ok");
 		} catch (Exception e) {
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
+			throw e;
 		}
 	}
 	
@@ -84,14 +84,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
 		}
 		name = name.trim();
 		address = address.trim();
-		try {
-			order = saveAndFlush(order.setDeliveryTime(deliveryTime)
-					.setName(name).setEmail(email).setPhone(phone)
-					.setTotal(total)
-					.setAddress(address).setComment(comment));
-		} catch (Exception e) {
-			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
-		}
+		order = saveAndFlush(order.setDeliveryTime(deliveryTime)
+				.setName(name).setEmail(email).setPhone(phone)
+				.setTotal(total)
+				.setAddress(address).setComment(comment));
 		return Pair.of(Optional.of(order), "ok");
 	}
 }

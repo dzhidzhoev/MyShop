@@ -147,11 +147,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		if (id != null) {
 			user.setId(id);
 		}
-		try {
-			user = saveAndFlush(user);
-		} catch (Exception e) {
-			return Pair.of(Optional.empty(), "unknown exception " + e.toString());
-		}
+		
+		user = saveAndFlush(user);
 		
 		return Pair.of(Optional.of(user), "ok");
 	}
