@@ -17,7 +17,7 @@
   <div class="form-group">
     <label for="password">Пароль</label>
     <input type="password" class="form-control" id="password" name="password" placeholder="Введите пароль">
-    <small id="passwordHelp" class="form-text text-muted"><a href="forgot.php">Забыли пароль?</a></small>
+    <small id="passwordHelp" class="form-text text-muted"><a href="forgot">Забыли пароль?</a></small>
     
 	  <c:if test="${param.error != null }">
 	  	<div class="text-danger">Пользователь не найден!</div>
@@ -32,5 +32,22 @@
 </div>
 </div>
 
+<c:if test="${param.restored != null }">
+<div id="restored-toast" data-delay="20000" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="toast-header">
+    <strong class="mr-auto">MyShop</strong>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+   	Вам отправлено письмо с инструкциями
+  </div>
+</div>
+<script type="text/javascript">
+$('.toast').toast();
+$('#restored-toast').toast('show');
+</script>
+</c:if>
 
 <%@ include file="footer.jspf" %>

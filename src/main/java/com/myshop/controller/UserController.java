@@ -1,10 +1,13 @@
 package com.myshop.controller;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,5 +68,26 @@ public class UserController {
 		SecurityContextHolder.getContext().setAuthentication(
 				authProvider.authenticate(new UsernamePasswordAuthenticationToken(email, password)));
 		return "redirect:/profile";
+	}
+	
+	@GetMapping("/forgot")
+	public String showForgot() {
+		return "forgot";
+	}
+	
+	@PostMapping("/forgot")
+	public String restorePassword(Model model, @RequestParam(name = "email") String email) {
+		email = email.trim();
+		if (email.isEmpty()) {
+			model.addAttribute("isEmailEmpty", "true");
+			return "forgot";
+		}
+		var attempt = userRepo.findByEmailIgnoreCase(email);
+		if (attempt.isPresent()) {
+			var user = attempt.get();
+			user.setPwdChangeToken(UUID.randomUUID().toString());
+			userRepo.saveAndFlush(user);
+		}
+		return "redirect:/login?restored=1";
 	}
 }
