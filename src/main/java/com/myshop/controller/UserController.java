@@ -2,7 +2,11 @@ package com.myshop.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -33,20 +37,23 @@ import com.myshop.repository.UserRepository;
 
 @Controller
 public class UserController {
+	private static final String SAME_PWD = "samePwd";
+	private static final String ERROR_MESSAGE = "errorMessage";
+	
 	@Autowired Environment env;
 	@Autowired UserRepository userRepo;
 	@Autowired OrderRepository orderRepo;
 	@Autowired ShopAuthProvider authProvider;
 	@Autowired JavaMailSender mailSender;
 	
-	private User getLoggedUser() {
+	private Integer getLoggedUserId() {
 		var security = SecurityContextHolder.getContext();
 		if (security.getAuthentication() == null 
 				|| !(security.getAuthentication().getPrincipal() instanceof ShopUserPrincipal)) {
 			return null;
 		}
 		ShopUserPrincipal principal = (ShopUserPrincipal) security.getAuthentication().getPrincipal();
-		return principal.getUser();
+		return principal.getUser() != null ? principal.getUser().getId() : null;
 	}
 	
 	@RequestMapping(value="/login",method=RequestMethod.GET)
@@ -55,7 +62,15 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/register", method = RequestMethod.GET)
-	public String showRegister() {
+	public String showRegister(Model model,
+			@RequestParam(name = SAME_PWD, required = false) String samePwd,
+			@RequestParam(name = ERROR_MESSAGE, required = false) String errorMessage) {
+		if (samePwd != null) {
+			model.addAttribute(SAME_PWD, samePwd);
+		}
+		if (errorMessage != null) {
+			model.addAttribute(ERROR_MESSAGE, errorMessage);
+		}
 		return "register";
 	}
 	
@@ -68,42 +83,86 @@ public class UserController {
 			@RequestParam(name = "email") String email, 
 			@RequestParam(name = "password") String password,
 			@RequestParam(name = "password2") String password2) throws UnsupportedEncodingException {
-		Runnable keepFormData = new Runnable() {
-			
-			@Override
-			public void run() {
-				model.addAttribute("form_lastName", lastName);
-				model.addAttribute("form_firstName", firstName);
-				model.addAttribute("form_middleName", middleName);
-				model.addAttribute("form_phoneNumber", phoneNumber);
-				model.addAttribute("form_address", address);
-				model.addAttribute("form_email", email);
+		return registerOrUpdate(model, request, "register", null, lastName, firstName, middleName, phoneNumber, address, email, password,
+				password2);
+	}
+	
+	@PostMapping("/update_user_info")
+	public String doUpdate(Model model, HttpServletRequest request,
+			@RequestParam(name = "userId") Integer id,
+			@RequestParam(name = "lastName") String lastName, 
+			@RequestParam(name = "firstName") String firstName, 
+			@RequestParam(name = "middleName") String middleName, 
+			@RequestParam(name = "phoneNumber") String phoneNumber, 
+			@RequestParam(name = "address") String address, 
+			@RequestParam(name = "email") String email, 
+			@RequestParam(name = "password") String password,
+			@RequestParam(name = "password2") String password2) throws UnsupportedEncodingException {
+		var userId = getLoggedUserId();
+		if (userId == null) {
+			return "redirect:/login";
+		}
+		var user = userRepo.findById(userId).get();
+		if (Boolean.valueOf(true).equals(user.isAdminOrNull()) || Integer.valueOf(user.getId()).equals(id)) {
+			return registerOrUpdate(model, request, "redirect:/profile", id, lastName, firstName, middleName, phoneNumber, address, email, password,
+					password2);
+		} else {
+			return "redirect:/login";
+		}
+	}
+	
+	private void fillModelData(Model model, Integer id, String lastName, String firstName, String middleName,
+			String phoneNumber, String address, String email, String password, String password2) {
+		if (id != null) {
+			model.addAttribute("form_userId", id);	
+		}
+		model.addAttribute("form_lastName", lastName);
+		model.addAttribute("form_firstName", firstName);
+		model.addAttribute("form_middleName", middleName);
+		model.addAttribute("form_phoneNumber", phoneNumber);
+		model.addAttribute("form_address", address);
+		model.addAttribute("form_email", email);
+		model.addAttribute("form_password", password);
+		model.addAttribute("form_password1", password2);
+	}
+	
+	private String registerOrUpdate(Model model, HttpServletRequest request, String errorUrl, Integer id, String lastName, String firstName,
+			String middleName, String phoneNumber, String address, String email, String password, String password2)
+			throws UnsupportedEncodingException {
+		Function<String, String> prepareParams = (String msg) -> {
+			if (errorUrl.startsWith("redirect:")) {
+				return msg;
+			} else {
+				return "";
 			}
 		};
 		
 		if (!password.equals(password2)) {
-			model.addAttribute("samePwd", true);
-			keepFormData.run();
-			return "register";
+			model.addAttribute(SAME_PWD, true);
+			fillModelData(model, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2);
+			return errorUrl + prepareParams.apply("?samePwd=true");
 		}
-		var attempt = userRepo.registerUser(null, lastName, firstName, middleName, phoneNumber, address, email, password);
+		var attempt = userRepo.registerUser(id, lastName, firstName, middleName, phoneNumber, address, email, password);
 		if (attempt.getFirst().isEmpty()) {
-			model.addAttribute("errorMessage", attempt.getSecond() + "");
-			keepFormData.run();
-			return "register";
+			model.addAttribute(ERROR_MESSAGE, attempt.getSecond() + "");
+			fillModelData(model, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2);
+			return errorUrl + prepareParams.apply("?errorMessage=" + URLEncoder.encode(attempt.getSecond() + "", "UTF-8"));
 		}
-		var user = attempt.getFirst().get();
-		SecurityContextHolder.getContext().setAuthentication(
-				authProvider.authenticate(new UsernamePasswordAuthenticationToken(email, password)));
 		
-		SimpleMailMessage msg = new SimpleMailMessage();
-		msg.setTo(user.getEmail());
-		msg.setSubject("Подтверждение пароля - MyShop");
-		msg.setText("Для подтверждения пароля перейдите по ссылке " +
-				"http://" + request.getLocalName() + "/confirm?email=" + URLEncoder.encode(user.getEmail(), "UTF-8") +
-				"&token=" + URLEncoder.encode(user.getEmailToken(), "UTF-8"));
-		msg.setFrom(env.getProperty("spring.mail.username"));
-		mailSender.send(msg);
+		if (id == null) {
+			var user = attempt.getFirst().get();
+			SecurityContextHolder.getContext().setAuthentication(
+					authProvider.authenticate(new UsernamePasswordAuthenticationToken(email, password)));
+			
+			SimpleMailMessage msg = new SimpleMailMessage();
+			msg.setTo(user.getEmail());
+			msg.setSubject("Подтверждение пароля - MyShop");
+			msg.setText("Для подтверждения пароля перейдите по ссылке " +
+					"http://" + request.getLocalName() + "/confirm?email=" + URLEncoder.encode(user.getEmail(), "UTF-8") +
+					"&token=" + URLEncoder.encode(user.getEmailToken(), "UTF-8"));
+			msg.setFrom(env.getProperty("spring.mail.username"));
+			mailSender.send(msg);
+		}
 		
 		return "redirect:/profile";
 	}
@@ -159,11 +218,11 @@ public class UserController {
 			@RequestParam(name = "password") String password,
 			@RequestParam(name = "password2") String password2) {
 		if (!password.equals(password2)) {
-			model.addAttribute("samePwd", "true");
+			model.addAttribute(SAME_PWD, "true");
 			return "reset";
 		}
 		if (!userRepo.isPasswordValid(password)) {
-			model.addAttribute("errorMessage", "Пароль содержит запрещённые символы или имеет длину меньше 8 знаков!");
+			model.addAttribute(ERROR_MESSAGE, "Пароль содержит запрещённые символы или имеет длину меньше 8 знаков!");
 			return "reset";
 		}
 		var attempt = userRepo.findByEmailIgnoreCase(email);
@@ -174,15 +233,26 @@ public class UserController {
 	}
 	
 	@GetMapping("/profile")
-	public String showProfile(Model model) {
-		var user = getLoggedUser();
-		if (user == null) {
+	public String showProfile(Model model,
+			// error codes
+			@RequestParam(name = SAME_PWD, required = false) Boolean samePwd,
+			@RequestParam(name = ERROR_MESSAGE, required = false) String errorMessage) {
+		Integer userId = getLoggedUserId();
+		if (userId == null) {
 			return "redirect:/login";
 		}
+		var user = userRepo.findById(userId).get();
 		model.addAttribute("user", user);
 		Pageable order = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("orderTime").descending());
 		var orders = orderRepo.findByUserId(user.getId(), order);
 		model.addAttribute("orders", orders);
+		if (samePwd != null) {
+			model.addAttribute(SAME_PWD, samePwd);
+		}
+		if (errorMessage != null) {
+			model.addAttribute(ERROR_MESSAGE, errorMessage);
+		}
+		fillModelData(model, user.getId(), user.getLastName(), user.getFirstName(), user.getMiddleName(), user.getPhone(), user.getAddress(), user.getEmail(), "", "");
 		return "profile";
 	}
 }

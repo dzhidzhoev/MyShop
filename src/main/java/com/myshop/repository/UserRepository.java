@@ -130,11 +130,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 		if (!email.contains("@") || email.length() < 4) {
 			return Pair.of(Optional.empty(), "not an email");
 		}
-		if (password.isEmpty() || !isPasswordValid(password)) {
-			return Pair.of(Optional.empty(), "password is invalid");
-		}
-		if (findByEmailIgnoreCase(email).isPresent() && id == null) {
+		var old = findByEmailIgnoreCase(email);
+		if (old.isPresent() && (id == null || old.get().getId() != id)) {
 			return Pair.of(Optional.empty(), "email has been used already");
+		}
+		String pwdHash = getPasswordHash(password);
+		if (!old.isPresent() && id != null && !password.isEmpty()) {
+			var oldId = findById(id);
+			if (oldId.isPresent() && !oldId.get().getPwdHash().equals(pwdHash)) {
+				return Pair.of(Optional.empty(), "can't change login and password simultaneously");
+			}
+		}
+		if (password.isEmpty() && id != null) {
+			pwdHash = findById(id).get().getPwdHash();
+		}
+		if ((password.isEmpty() && id == null) || (!isPasswordValid(password) && !password.isEmpty())) {
+			return Pair.of(Optional.empty(), "password is invalid");
 		}
 		var user = new User().setLastName(lastName)
 				.setFirstName(firstName)
@@ -142,7 +153,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 				.setPhone(phoneNumber)
 				.setAddress(address)
 				.setEmail(email)
-				.setPwdHash(getPasswordHash(password))
+				.setPwdHash(pwdHash)
 				.setEmailToken(UUID.randomUUID().toString());
 		if (id != null) {
 			user.setId(id);

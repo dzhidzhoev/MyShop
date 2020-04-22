@@ -68,7 +68,6 @@
 		<dependency>
 		  <groupId>org.hibernate</groupId>
 		  <artifactId>hibernate-jpamodelgen</artifactId>
-		  <version>5.4.13.Final</version>
 		</dependency>
 		
 		<dependency>
@@ -97,7 +96,7 @@
 	</dependencies>
 
 	<build>
-		    <outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
+	<!-- 	    <outputDirectory>${project.build.directory}/generated-sources</outputDirectory> -->
 	
 		<pluginManagement>
 			<plugins>
@@ -132,6 +131,13 @@
 		            <configuration>
 		               <source>1.10</source>
 		               <target>1.10</target>
+		               <annotationProcessorPaths>
+		                    <annotationProcessorPath>
+		                        <groupId>org.hibernate</groupId>
+		                        <artifactId>hibernate-jpamodelgen</artifactId>
+		                        <version>5.2.6.Final</version>
+		                    </annotationProcessorPath>
+		                </annotationProcessorPaths>
 		               <compilerArguments>
 		                  <processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
 		               </compilerArguments>

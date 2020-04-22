@@ -2,7 +2,10 @@
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<form action="register" method="post">
+<form action="${action_url}" method="post">
+	<c:if test="${form_userId != null}">
+		<input type="hidden" name="userId" value="${form_userId}" />
+	</c:if>
   <div class="form-group">
     <label for="exampleInputEmail1">Фамилия *</label>
     <input value="${fn:escapeXml(form_lastName)}" name="lastName" type="text" required="required" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Введите фамилию">
@@ -40,8 +43,8 @@
   	<c:otherwise>	
 	  <div class="form-group">
 	    <label for="exampleInputPassword1">Пароль (минимум 8 символов) *</label>
-	    <input name="password" type="password" required="required" class="form-control" id="exampleInputPassword1" placeholder="Введите пароль">
-	    <input name="password2" type="password" required="required" class="form-control" id="exampleInputPassword2" placeholder="Повторите пароль">
+	    <input value="${fn:escapeXml(form_password)}" name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Введите пароль">
+	    <input value="${fn:escapeXml(form_password1)}" name="password2" type="password" class="form-control" id="exampleInputPassword2" placeholder="Повторите пароль">
 	    <c:if test="${samePwd != null }">
 	    	<div class="text-danger">Введены разные пароли!</div>
 	    </c:if>

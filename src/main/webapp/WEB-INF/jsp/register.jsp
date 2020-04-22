@@ -11,6 +11,7 @@
 <div class="row">
 <div class="col">
 <c:set var="edit_admin" value="false"></c:set>
+<c:set var="action_url" value="register"></c:set>
 <c:set var="action" value="Зарегистрироваться"></c:set>
 <%@ include file="admin/userdata.jspf" %>
 </div>

@@ -63,10 +63,10 @@
     
     <div class="col-md-6">
         <b>Мои данные</b><br>
-<?php 
-include 'userdata.php';
-userdata_form('Обновить данные');
-?>
+        <c:set var="action_url" value="update_user_info"></c:set>
+		<c:set var="edit_admin" value="false"></c:set>
+		<c:set var="action" value="Обновить данные"></c:set>
+		<%@ include file="admin/userdata.jspf" %>
     </div>
 </div>
 </div>
