@@ -15,17 +15,17 @@ public interface ItemRepositoryCustom {
 		public TermType type = TermType.ONE_OF;
 		public Trait trait;
 		public Set<String> oneOfValues = new HashSet<>();
-		public int minSegmentVal = 0, maxSegmenVal = 0;
+		public int minSegmentVal = 0, maxSegmentVal = 0;
 		
 		public Term() {
 		}
-		public Term(TermType type, Trait trait, Set<String> oneOfValues, int minSegmentVal, int maxSegmenVal) {
+		public Term(TermType type, Trait trait, Set<String> oneOfValues, int minSegmentVal, int maxSegmentVal) {
 			super();
 			this.type = type;
 			this.trait = trait;
 			this.oneOfValues = oneOfValues;
 			this.minSegmentVal = minSegmentVal;
-			this.maxSegmenVal = maxSegmenVal;
+			this.maxSegmentVal = maxSegmentVal;
 		}
 		
 	}

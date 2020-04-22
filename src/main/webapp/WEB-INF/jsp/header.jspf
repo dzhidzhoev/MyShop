@@ -63,18 +63,17 @@
 				</c:if>
 			</c:forEach>
 		</ul>
-		<form action="cart.php">
+		<form action="/user/cart">
 		<button class="btn btn-success my-2 my-sm-0 mx-1" type="submit">Корзина</button>
 		</form>
 <c:choose>
 	<c:when test="${isAuthorized }">
-		<form action="profile">
+		<form action="/profile">
 	</c:when>
 	<c:otherwise>
-		<form action="login">
+		<form action="/login">
 	</c:otherwise>
 </c:choose>
-		<form action="login">
 		<button class="btn btn-danger my-2 my-sm-0 mx-1" type="submit">Личный кабинет</button>
 		</form>
 	</nav>

@@ -1,3 +1,4 @@
+<%@page import="com.myshop.controller.CategoryController"%>
 <%@page import="java.time.ZoneId"%>
 <%@page import="java.time.format.FormatStyle"%>
 <%@page import="java.time.format.DateTimeFormatter"%>
@@ -24,7 +25,7 @@
 <a href="users.php">Пользователи</a>
 </div>
 <div class="col m-2 text-left">
-<a href="categories.php">Категории товаров</a>
+<a href="<%=CategoryController.ADMIN_CATEGORIES_PATH%>">Категории товаров</a>
 </div>
 <div class="col m-2 text-left">
 <a href="traits.php">Свойства товаров</a>

@@ -48,7 +48,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 				break;
 			case BETWEEN:
 				cq.where(builder.and(builder.equal(it.get(ItemTrait_.trait), term.trait),
-						builder.and(builder.lessThanOrEqualTo(it.get(ItemTrait_.valueInt), term.maxSegmenVal),
+						builder.and(builder.lessThanOrEqualTo(it.get(ItemTrait_.valueInt), term.maxSegmentVal),
 							builder.greaterThanOrEqualTo(it.get(ItemTrait_.valueInt), term.minSegmentVal))));
 				break;
 			}
