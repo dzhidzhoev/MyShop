@@ -11,8 +11,12 @@ import com.myshop.model.User;
 import com.sun.security.auth.UserPrincipal;
 
 public class ShopUserPrincipal implements UserDetails {
+	public User getUser() {
+		return user;
+	}
+
 	private static final long serialVersionUID = 1L;
-	private User user;
+	public User user;
 	
 	public ShopUserPrincipal(User user) {
 		this.user = user;

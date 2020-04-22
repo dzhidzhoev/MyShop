@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,14 +26,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.myshop.ShopAuthProvider;
+import com.myshop.ShopUserPrincipal;
+import com.myshop.model.User;
+import com.myshop.repository.OrderRepository;
 import com.myshop.repository.UserRepository;
 
 @Controller
 public class UserController {
 	@Autowired Environment env;
 	@Autowired UserRepository userRepo;
+	@Autowired OrderRepository orderRepo;
 	@Autowired ShopAuthProvider authProvider;
 	@Autowired JavaMailSender mailSender;
+	
+	private User getLoggedUser() {
+		var security = SecurityContextHolder.getContext();
+		if (security.getAuthentication() == null 
+				|| !(security.getAuthentication().getPrincipal() instanceof ShopUserPrincipal)) {
+			return null;
+		}
+		ShopUserPrincipal principal = (ShopUserPrincipal) security.getAuthentication().getPrincipal();
+		return principal.getUser();
+	}
 	
 	@RequestMapping(value="/login",method=RequestMethod.GET)
 	public String showLogin() {
@@ -154,5 +171,18 @@ public class UserController {
 			userRepo.resetPassword(token, password);
 		}
 		return "redirect:/login?pwdchanged=1";
+	}
+	
+	@GetMapping("/profile")
+	public String showProfile(Model model) {
+		var user = getLoggedUser();
+		if (user == null) {
+			return "redirect:/login";
+		}
+		model.addAttribute("user", user);
+		Pageable order = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("orderTime").descending());
+		var orders = orderRepo.findByUserId(user.getId(), order);
+		model.addAttribute("orders", orders);
+		return "profile";
 	}
 }
