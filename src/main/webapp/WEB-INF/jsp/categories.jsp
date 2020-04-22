@@ -1,3 +1,4 @@
+<%@page import="com.myshop.controller.CategoryController"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -28,7 +29,7 @@
 	<c:forEach items="${categories}" var="cat">
 	    <tr>
 	      <th scope="row">${cat.getId()}</th>
-	      <td><a href="category-admin.php">${fn:escapeXml(cat.getName())}</a></td>
+	      <td><a href="<%=CategoryController.ADMIN_CATEGORY_PATH%>?categoryId=${cat.getId()}">${fn:escapeXml(cat.getName())}</a></td>
 	      <td>
 	      <c:choose>
 	      <c:when test="${cat.isActive()}">
