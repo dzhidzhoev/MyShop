@@ -17,7 +17,7 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			Trait trait = traitRes.get();
 			switch (trait.getType()) {
 			case IntType:
-				return String.valueOf(Math.min(trait.getMaxValue(), Math.max(trait.getMinValue(), itemTrait.getValueInt())));
+				return String.valueOf(Math.min(trait.getMaxValueScalar(), Math.max(trait.getMinValueScalar(), itemTrait.getValueInt())));
 			case StringType:
 				return itemTrait.getValue() == null ? "" : itemTrait.getValue();
 			case EnumType:
@@ -61,8 +61,8 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 				} catch (NumberFormatException e) {
 					return Optional.empty();
 				}
-				if (valueInt < trait.getMinValue() 
-						|| valueInt > trait.getMaxValue()) {
+				if (valueInt < trait.getMinValueScalar() 
+						|| valueInt > trait.getMaxValueScalar()) {
 					return Optional.empty();
 				}
 				itemTrait.setValueInt(valueInt);

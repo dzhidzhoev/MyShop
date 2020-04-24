@@ -44,7 +44,7 @@ public interface TraitRepository extends JpaRepository<Trait, Integer> {
 		}
 		var trait = new Trait()
 				.setName(name)
-				.setSearchable(isSearchable)
+				.setSearchableChained(isSearchable)
 				.setType(type)
 				.setMinValue(minValue)
 				.setMaxValue(maxValue)

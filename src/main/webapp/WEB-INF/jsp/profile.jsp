@@ -1,3 +1,4 @@
+<%@page import="com.myshop.controller.TraitController"%>
 <%@page import="com.myshop.controller.CategoryController"%>
 <%@page import="java.time.ZoneId"%>
 <%@page import="java.time.format.FormatStyle"%>
@@ -28,7 +29,7 @@
 <a href="<%=CategoryController.ADMIN_CATEGORIES_PATH%>">Категории товаров</a>
 </div>
 <div class="col m-2 text-left">
-<a href="traits.php">Свойства товаров</a>
+<a href="<%=TraitController.MANAGE_TRAITS_PATH%>">Свойства товаров</a>
 </div>
 <div class="col m-2 text-left">
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">

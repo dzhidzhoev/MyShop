@@ -63,14 +63,17 @@ public class Trait {
 		this.type = type;
 		return this;
 	}
-	public Boolean isSearchable() {
-		return isSearchable;
+	public boolean isSearchable() {
+		return isSearchable == null ? false : isSearchable;
 	}
-	public Trait setSearchable(boolean isSearchable) {
+	public void setSearchable(boolean s) {
+		this.isSearchable = s;
+	}
+	public Trait setSearchableChained(boolean isSearchable) {
 		this.isSearchable = isSearchable;
 		return this;
 	}
-	public int getMinValue() {
+	public int getMinValueScalar() {
 		return minValue == null ? 0 : minValue;
 	}
 	public Trait setMinValue(Integer minValue) {
@@ -85,14 +88,14 @@ public class Trait {
 		return this;
 	}
 	
-	public Integer getMaxValueOrNull() {
+	public Integer getMaxValue() {
 		return maxValue;
 	}
-	public Integer getMinValueOrNull() {
+	public Integer getMinValue() {
 		return minValue;
 	}
 	
-	public int getMaxValue() {
+	public int getMaxValueScalar() {
 		return maxValue == null ? Integer.MAX_VALUE : maxValue;
 	}
 	public Trait setMaxValue(Integer maxValue) {

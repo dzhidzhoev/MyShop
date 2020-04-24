@@ -270,19 +270,19 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 			return false;
 		Trait other = (Trait) obj;
 		if (isSearchable == null) {
-			if (other.isSearchable() != null)
+			if (other.isSearchable())
 				return false;
 		} else if (!isSearchable.equals(other.isSearchable()))
 			return false;
 		if (maxValue == null) {
-			if (other.getMaxValueOrNull() != null)
+			if (other.getMaxValue() != null)
 				return false;
-		} else if (!maxValue.equals(other.getMaxValue()))
+		} else if (!maxValue.equals(other.getMaxValueScalar()))
 			return false;
 		if (minValue == null) {
-			if (other.getMinValueOrNull() != null)
+			if (other.getMinValue() != null)
 				return false;
-		} else if (!minValue.equals(other.getMinValue()))
+		} else if (!minValue.equals(other.getMinValueScalar()))
 			return false;
 		if (name == null) {
 			if (other.getName() != null)
