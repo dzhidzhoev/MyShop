@@ -15,9 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 @Entity
 public class Item {
 	@Id
@@ -93,6 +90,9 @@ public class Item {
 		return this;
 	}
 	
+	public byte[] getImage() {
+		return image;
+	}
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub

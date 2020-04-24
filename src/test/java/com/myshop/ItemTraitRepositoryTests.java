@@ -39,11 +39,11 @@ public class ItemTraitRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertEquals(itemTraitRepo.getValue(unknownIT, traitRepo), "");
 		// integer out of bound
 		var outIT = new ItemTrait().setId(new ID(1, 3)).setValueInt(5);
-		assertEquals(itemTraitRepo.getValue(outIT, traitRepo), "10");
+		assertEquals(itemTraitRepo.getValue(outIT, traitRepo), "10 см");
 		outIT.setValueInt(5999999);
-		assertEquals(itemTraitRepo.getValue(outIT, traitRepo), "250");
+		assertEquals(itemTraitRepo.getValue(outIT, traitRepo), "250 см");
 		// integer ok
-		assertEquals(itemTraitRepo.getValue(itemTraitRepo.findById(new ID(1, 3)).get(), traitRepo), "50");
+		assertEquals(itemTraitRepo.getValue(itemTraitRepo.findById(new ID(1, 3)).get(), traitRepo), "50 см");
 		// string null
 		var nullIT = new ItemTrait().setId(new ID(3, 1)).setValue(null);
 		assertEquals(itemTraitRepo.getValue(nullIT, traitRepo), "");

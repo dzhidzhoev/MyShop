@@ -31,6 +31,13 @@ public class CategoryTrait {
 
 		public int categoryId, traitId;
 
+		public ID() {}
+		
+		public ID(int categoryId, int traitId) {
+			super();
+			this.categoryId = categoryId;
+			this.traitId = traitId;
+		}
 
 		@Override
 		public int hashCode() {
@@ -57,6 +64,7 @@ public class CategoryTrait {
 				return false;
 			return true;
 		}
+
 		
 	}
 	
@@ -71,6 +79,13 @@ public class CategoryTrait {
 	@MapsId("traitID")
 	@JoinColumn(name = "TraitID")
 	private Trait trait;
+	
+	public CategoryTrait() {
+	}
+	
+	public CategoryTrait(ID id) {
+		categoryTrait = id;
+	}
 
 	@Override
 	public int hashCode() {

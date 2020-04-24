@@ -17,7 +17,9 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			Trait trait = traitRes.get();
 			switch (trait.getType()) {
 			case IntType:
-				return String.valueOf(Math.min(trait.getMaxValueScalar(), Math.max(trait.getMinValueScalar(), itemTrait.getValueInt())));
+				String unit = trait.getUnit();
+				return String.valueOf(Math.min(trait.getMaxValueScalar(), Math.max(trait.getMinValueScalar(), itemTrait.getValueInt()))) 
+						+ (unit == null || unit.isEmpty() ? "" : " " + unit);
 			case StringType:
 				return itemTrait.getValue() == null ? "" : itemTrait.getValue();
 			case EnumType:
