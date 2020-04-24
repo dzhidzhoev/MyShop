@@ -16,6 +16,7 @@ import com.myshop.model.Item;
 public interface ItemRepository extends JpaRepository<Item, Integer>, ItemRepositoryCustom {
 	public Set<Item> findItemsByCategoryId(int categoryId);
 	public List<Item> findItemsByCategoryId(int categoryId, Pageable page);
+	public byte[] findImageById(int id);
 	
 	public default Pair<Optional<Item>, String> addOrUpdateItem(
 			Integer id, Category category, String name,

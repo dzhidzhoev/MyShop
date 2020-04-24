@@ -78,7 +78,8 @@ CREATE TABLE Item (
   Price int NOT NULL,
   Count int,
   Active boolean,
-  Description text
+  Description text,
+  Image bytea
 );
 
 CREATE TABLE Cart (
