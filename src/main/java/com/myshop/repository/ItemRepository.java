@@ -14,7 +14,13 @@ import com.myshop.model.Item;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer>, ItemRepositoryCustom {
+	public List<Item> findByPriceLessThanEqual(int price);
+	public List<Item> findByPriceGreaterThanEqual(int price);
+	public List<Item> findByPriceBetween(int minPrice, int maxPrice);
 	public Set<Item> findItemsByCategoryId(int categoryId);
+	public List<Item> findItemsByCategoryIdAndPriceLessThanEqual(int categoryId, int price);
+	public List<Item> findItemsByCategoryIdAndPriceGreaterThanEqual(int categoryId, int price);
+	public List<Item> findItemsByCategoryIdAndPriceBetween(int categoryId, int minPrice, int maxPrice);
 	public List<Item> findItemsByCategoryId(int categoryId, Pageable page);
 	
 	public default byte[] getImageById(int id) {

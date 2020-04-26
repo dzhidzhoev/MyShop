@@ -68,7 +68,12 @@ INSERT INTO ItemTrait (ItemID, TraitID, Value, ValueInt) VALUES
 (1, 3, NULL, 50),
 (1, 4, NULL, 150),
 (1, 5, NULL, 70),
-(3, 6, 'Bluray', NULL);
+(3, 6, 'Bluray', NULL),
+
+(1, 1, 'Me', NULL),
+(2, 1, 'IBM', NULL),
+(3, 1, 'SONTY', NULL),
+(4, 1, 'БОШ', NULL);
 
 INSERT INTO Cart (UserID, ItemID, Count) VALUES
 (1, 1, 1),

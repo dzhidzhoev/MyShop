@@ -12,9 +12,10 @@
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
 	integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
 	crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-	integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-	crossorigin="anonymous" type="text/javascript"></script>
+ <script
+	src="https://code.jquery.com/jquery-3.5.0.min.js"
+	integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+	crossorigin="anonymous"></script>
 <script
 	src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
 	integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
@@ -23,6 +24,8 @@
 	src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
 	integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
 	crossorigin="anonymous" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/bootstrap-slider.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css">
 <style type="text/css">
 .vcenter {
     display: flex; 
@@ -38,28 +41,36 @@
 <body>
 	<div class="container">
 		<div class="row">
-			<form action="index.php">
+			<form action="/">
 				<button class="btn btn-secondary my-2" type="submit"><h1>MyShop</h1></button>	
 			</form>
 		</div>
 	</div>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 		<ul class="navbar-nav mr-auto">
-			<c:choose>
-				<c:when test="requestScope['javax.servlet.forward.request_uri'] == '/'">
-						<li class="nav-item active"><a class="nav-link" href="/">Главная</a></li>
-				</c:when>
-				<c:when test="requestScope['javax.servlet.forward.request_uri'] == ''">
-					<li class="nav-item active"><a class="nav-link" href="/">Главная</a></li>
-				</c:when>
-				<c:otherwise>
-					<li class="nav-item"><a class="nav-link" href="/">Главная</a></li>
-				</c:otherwise>
-			</c:choose>
+			<li class="nav-item">
+				<c:choose>
+					<c:when test="${not empty param.categoryId}">
+						<a id="main-link" class="nav-link" href="/">Главная</a>
+					</c:when>
+					<c:otherwise>
+						<a id="main-link" class="nav-link active" href="/">Главная</a>
+					</c:otherwise>
+				</c:choose>
+			</li>
 			
 			<c:forEach items="${menuCategories}" var="cat">
 				<c:if test="${cat.isActive()}">
-					<li class="nav-item"><a class="nav-link" href="index.php">${cat.getName()}</a></li>
+					<li class="nav-item">
+					<c:choose>
+					<c:when test="${cat.getId() == param.categoryId }">
+						<a class="nav-link active" href="/?categoryId=${cat.getId() }">${cat.getName()}</a>
+					</c:when>
+					<c:otherwise>
+						<a class="nav-link" href="/?categoryId=${cat.getId() }">${cat.getName()}</a>
+					</c:otherwise>
+					</c:choose>
+					</li>
 				</c:if>
 			</c:forEach>
 		</ul>

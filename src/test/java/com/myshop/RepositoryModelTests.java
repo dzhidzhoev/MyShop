@@ -1,6 +1,7 @@
 package com.myshop;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -323,10 +324,11 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		checkTVItems(itemRepo.findById(2).stream().collect(Collectors.toSet()));
 		checkPlayers(itemRepo.findById(3).stream().collect(Collectors.toSet()));
 		checkWashes(itemRepo.findById(4).stream().collect(Collectors.toSet()));
-		assertTrue(itemTraitRepo.findByItemId(itemRepo.findById(2).get().getId()).isEmpty());
-		assertTrue(itemTraitRepo.findByItemId(itemRepo.findById(4).get().getId()).isEmpty());
+		assertFalse(itemTraitRepo.findByItemId(itemRepo.findById(2).get().getId()).isEmpty());
+		assertFalse(itemTraitRepo.findByItemId(itemRepo.findById(4).get().getId()).isEmpty());
 		List<ItemTrait> fridgeTraitSet = 
 				itemTraitRepo.findByItemId(itemRepo.findById(1).get().getId()).stream()
+				.filter(it -> it.getId().getTraitID() != 1)
 				.sorted((i1, i2) -> 
 					Integer.compare(i1.getTrait().getId(), i2.getTrait().getId()))
 				.collect(Collectors.toList());
@@ -341,8 +343,14 @@ public class RepositoryModelTests extends AbstractTestNGSpringContextTests {
 		assertTrue(Arrays.deepEquals(fridgeTraitSet.stream()
 				.map(ItemTrait::getValueInt).toArray(), 
 				new Integer[] {50, 150, 70}));
+		var labels = itemTraitRepo.findByTraitId(1).stream().map(it -> it.getValue()).collect(Collectors.toSet());
+		assertEquals(labels.size(), 4);
+		for (var label: List.of("Me", "IBM", "SONTY", "БОШ")) {
+			assertTrue(labels.contains(label));
+		}
 		
-		var blurays = itemTraitRepo.findByItemId(itemRepo.findById(3).get().getId());
+		var blurays = itemTraitRepo.findByItemId(itemRepo.findById(3).get().getId()).stream()
+				.filter(it -> it.getId().getTraitID() != 1).collect(Collectors.toSet());
 		assertEquals(blurays.size(), 1);
 		var bluray = blurays.stream().findAny().get();
 		assertEquals(bluray.getItem().getId(), 3);

@@ -63,7 +63,7 @@ public class ItemTraitRepositoryTests extends AbstractTestNGSpringContextTests {
 	
 	@Test
 	public void itemTraitSetTest() {
-		assertEquals(itemTraitRepo.findAll().size(), 4);
+		assertEquals(itemTraitRepo.findAll().size(), 8);
 		
 		// not present
 		var unknownIT = new ItemTrait().setId(new ID(1, 100));
@@ -81,7 +81,7 @@ public class ItemTraitRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertTrue(itemTraitRepo.setValue(outIT, "50", traitRepo, itemRepo).isPresent());
 		assertEquals(itemTraitRepo.findById(intId).get().getValueInt(), 50);
 		// string null
-		ID stringId = new ID(3, 1);
+		ID stringId = new ID(3, 2);
 		ItemTrait stringTrait = new ItemTrait().setId(stringId);
 		// string ok
 		assertTrue(itemTraitRepo.setValue(stringTrait, "helo", traitRepo, itemRepo).isPresent());
@@ -103,6 +103,6 @@ public class ItemTraitRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertEquals(itemTraitRepo.setValue(itemTraitRepo.findById(enumId).get(), "Bluray", traitRepo, itemRepo).isPresent(), true);
 		assertEquals(itemTraitRepo.findById(enumId).get().getValue(), "Bluray");
 		
-		assertEquals(itemTraitRepo.findAll().size(), 4);
+		assertEquals(itemTraitRepo.findAll().size(), 8);
 	}
 }

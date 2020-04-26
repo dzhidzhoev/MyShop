@@ -4,12 +4,16 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.myshop.model.ItemTrait;
 import com.myshop.model.Trait;
 
 public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.ID> {
 	public Set<ItemTrait> findByItemId(int itemId);
+	public Set<ItemTrait> findByTraitId(int traitId);
+	@Query("SELECT DISTINCT it.value FROM ItemTrait it WHERE TraitID = ?1")
+	public Set<String> findStringValuesOfTrait(int traitId);
 	
 	public default String getValue(ItemTrait itemTrait, TraitRepository traitRepo) {
 		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getId().getTraitID());

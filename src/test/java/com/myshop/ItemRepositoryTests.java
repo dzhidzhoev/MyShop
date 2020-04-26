@@ -108,65 +108,66 @@ public class ItemRepositoryTests extends AbstractTestNGSpringContextTests {
 	@Test
 	public void filterTest() {
 		assertEquals(itemRepo.findAll().size(), 4);
-		var category = catRepo.findById(1).get();
+		var category = catRepo.findById(3).get();
 		var trait3 = traitRepo.findById(3).get();
 		var trait4 = traitRepo.findById(4).get();
 		var category2 = catRepo.findById(2).get();
 		var trait6 = traitRepo.findById(6).get();
+		Integer minPrice = null, maxPrice = null;
 		// empty
-		assertTrue(itemRepo.findItemsByTerms(category, Lists.newArrayList()).isEmpty());
+		assertTrue(itemRepo.findItemsByTerms(category, Lists.newArrayList(), minPrice, maxPrice).isEmpty());
 		
 		// no trait
-		var res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, traitRepo.findById(7).get(), Set.of(), 0, 10000)));
+		var res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, traitRepo.findById(7).get(), Set.of(), 0, 10000)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
 		
 		// between ok
-		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 200)));
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 200)), minPrice, maxPrice);
 		assertEquals(res.size(), 1);
 		assertEquals(res.stream().findAny().get().getId(), 1);
-		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50)));
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50)), minPrice, maxPrice);
 		assertEquals(res.size(), 1);
 		assertEquals(res.stream().findAny().get().getId(), 1);
 		// between not ok
-		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 49)));
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 49)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
-		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 51, 10000)));
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 51, 10000)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
-		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 100, 0)));
+		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 100, 0)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
 		
 		// one of not ok
-		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "something cool"), 100, 0)));
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "something cool"), 100, 0)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
-		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("something cool"), 100, 0)));
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("something cool"), 100, 0)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
-		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of(), 100, 0)));
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of(), 100, 0)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
 		
 		// one of ok
-		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "Bluray", "something cool"), 50, 50)));
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "Bluray", "something cool"), 50, 50)), minPrice, maxPrice);
 		assertEquals(res.size(), 1);
 		assertEquals(res.stream().findAny().get().getId(), 3);
-		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "Bluray"), 50, 50)));
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("DVD", "Bluray"), 50, 50)), minPrice, maxPrice);
 		assertEquals(res.size(), 1);
 		assertEquals(res.stream().findAny().get().getId(), 3);
-		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("Bluray"), 50, 50)));
+		res = itemRepo.findItemsByTerms(category2, List.of(new ItemRepositoryCustom.Term(TermType.ONE_OF, trait6, Set.of("Bluray"), 50, 50)), minPrice, maxPrice);
 		assertEquals(res.size(), 1);
 		assertEquals(res.stream().findAny().get().getId(), 3);
 		
 		// two between not ok
 		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 49),
-				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 0, 1000)));
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 0, 1000)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
 		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50),
-				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 151, 1000)));
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 151, 1000)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
 		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 0, 20),
-				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 151, 1000)));
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 151, 1000)), minPrice, maxPrice);
 		assertEquals(res.size(), 0);
 		// two between ok
 		res = itemRepo.findItemsByTerms(category, List.of(new ItemRepositoryCustom.Term(TermType.BETWEEN, trait3, null, 50, 50),
-				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 0, 1000)));
+				new ItemRepositoryCustom.Term(TermType.BETWEEN, trait4, null, 0, 1000)), minPrice, maxPrice);
 		assertEquals(res.size(), 1);
 		assertEquals(res.stream().findAny().get().getId(), 1);
 	}
