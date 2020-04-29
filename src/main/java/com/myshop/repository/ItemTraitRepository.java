@@ -16,14 +16,21 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 	public Set<String> findStringValuesOfTrait(int traitId);
 	
 	public default String getValue(ItemTrait itemTrait, TraitRepository traitRepo) {
+		return getValue(itemTrait, traitRepo, true);
+	}
+	
+	public default String getValue(ItemTrait itemTrait, TraitRepository traitRepo, boolean addUnit) {
 		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getId().getTraitID());
 		if (traitRes.isPresent()) {
 			Trait trait = traitRes.get();
 			switch (trait.getType()) {
 			case IntType:
 				String unit = trait.getUnit();
+				if (itemTrait.getValueIntOrNull() == null) {
+					return "";
+				}
 				return String.valueOf(Math.min(trait.getMaxValueScalar(), Math.max(trait.getMinValueScalar(), itemTrait.getValueInt()))) 
-						+ (unit == null || unit.isEmpty() ? "" : " " + unit);
+						+ (unit == null || unit.isEmpty() || !addUnit ? "" : " " + unit);
 			case StringType:
 				return itemTrait.getValue() == null ? "" : itemTrait.getValue();
 			case EnumType:
@@ -61,14 +68,19 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			break;
 		case IntType:
 			try {
-				int valueInt;
+				Integer valueInt;
 				try {
-					valueInt = Integer.valueOf(value);
+					if (!value.isEmpty()) {
+						valueInt = Integer.valueOf(value);
+						
+						if (valueInt < trait.getMinValueScalar() 
+								|| valueInt > trait.getMaxValueScalar()) {
+							return Optional.empty();
+						}
+					} else {
+						valueInt = null;
+					}
 				} catch (NumberFormatException e) {
-					return Optional.empty();
-				}
-				if (valueInt < trait.getMinValueScalar() 
-						|| valueInt > trait.getMaxValueScalar()) {
 					return Optional.empty();
 				}
 				itemTrait.setValueInt(valueInt);
@@ -77,7 +89,7 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			}
 			break;
 		case EnumType:
-			if (trait.getValues() == null || !trait.getValues().contains(value)) {
+			if (trait.getValues() == null || (!value.isEmpty() && !trait.getValues().contains(value))) {
 				return Optional.empty();
 			}
 			itemTrait.setValue(value);

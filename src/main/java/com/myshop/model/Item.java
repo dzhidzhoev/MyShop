@@ -93,6 +93,12 @@ public class Item {
 	public byte[] getImage() {
 		return image;
 	}
+	
+	public Item setImage(byte[] img) {
+		this.image = img;
+		return this;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub

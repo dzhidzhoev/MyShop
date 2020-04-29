@@ -28,8 +28,45 @@ public interface ItemRepositoryCustom {
 			this.minSegmentVal = minSegmentVal;
 			this.maxSegmentVal = maxSegmentVal;
 		}
-		
+		public Set<String> getOneOfValues() {
+			return oneOfValues;
+		}
+		public void setOneOfValues(Set<String> oneOfValues) {
+			this.oneOfValues = oneOfValues;
+		}
+		public int getMinSegmentVal() {
+			return minSegmentVal;
+		}
+		public void setMinSegmentVal(int minSegmentVal) {
+			this.minSegmentVal = minSegmentVal;
+		}
+		public int getMaxSegmentVal() {
+			return maxSegmentVal;
+		}
+		public void setMaxSegmentVal(int maxSegmentVal) {
+			this.maxSegmentVal = maxSegmentVal;
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + traitID;
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Term other = (Term) obj;
+			if (traitID != other.traitID)
+				return false;
+			return true;
+		}
 	}
 	
-	public Set<Item> findItemsByTerms(Category category, List<Term> filter, Integer minPrice, Integer maxPrice);
+	public Set<Item> findItemsByTerms(Category category, Set<Term> filter, Integer minPrice, Integer maxPrice);
 }

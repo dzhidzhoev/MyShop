@@ -5,7 +5,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +16,8 @@ import com.myshop.model.Item;
 
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Integer>, ItemRepositoryCustom {
+	@EntityGraph(attributePaths = {"image"})
+	public Optional<Item> findWithImageById(int id);
 	public List<Item> findByPriceLessThanEqual(int price);
 	public List<Item> findByPriceGreaterThanEqual(int price);
 	public List<Item> findByPriceBetween(int minPrice, int maxPrice);
@@ -31,7 +35,7 @@ public interface ItemRepository extends JpaRepository<Item, Integer>, ItemReposi
 	public default Pair<Optional<Item>, String> addOrUpdateItem(
 			Integer id, Category category, String name,
 			int price, Integer count, boolean active, 
-			String description) {
+			String description, byte[] image) {
 		if (category == null) {
 			return Pair.of(Optional.empty(), "no category");
 		}
@@ -45,7 +49,8 @@ public interface ItemRepository extends JpaRepository<Item, Integer>, ItemReposi
 				.setPrice(price)
 				.setCount(count)
 				.setActive(active)
-				.setDescription(description);
+				.setDescription(description)
+				.setImage(image);
 		if (id != null) {
 			item.setId(id);
 		}

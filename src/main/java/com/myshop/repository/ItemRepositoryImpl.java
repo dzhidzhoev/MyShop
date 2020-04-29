@@ -29,7 +29,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 	
 	@Override
 	@Transactional
-	public Set<Item> findItemsByTerms(Category category, List<Term> filter, Integer minPrice, Integer maxPrice) {
+	public Set<Item> findItemsByTerms(Category category, Set<Term> filter, Integer minPrice, Integer maxPrice) {
 		var builder = em.getCriteriaBuilder();
 		List<Set<Item>> result = new ArrayList<Set<Item>>();
 		if (filter.isEmpty()) {
@@ -62,7 +62,7 @@ public class ItemRepositoryImpl implements ItemRepositoryCustom {
 				pred = builder.and(builder.equal(it.get(ItemTrait_.trait), traitRepo.findById(term.traitID).get()),
 							builder.and(builder.equal(item.get(Item_.category), category.getId()),
 								term.oneOfValues.stream()
-								.map(val -> builder.equal(it.get(ItemTrait_.value), val))
+								.map(val -> (Expression<Boolean>) builder.equal(it.get(ItemTrait_.value), val))
 								.reduce((e1, e2) -> builder.or(e1, e2)).get()));
 				break;
 			case BETWEEN:

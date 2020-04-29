@@ -2,7 +2,6 @@ package com.myshop.controller;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -38,7 +37,7 @@ public class ItemsController {
 	@GetMapping("/")
 	public String showItems(Model model,
 			@RequestParam Optional<Integer> categoryId,
-			@RequestParam(name = "searchTerms", required = false) List<Term> searchTerms,
+			@RequestParam(name = "searchTerms", required = false) Set<Term> searchTerms,
 			@RequestParam Optional<Integer> minPrice, @RequestParam Optional<Integer> maxPrice
 			) throws NotFoundException {
 		Collection<Item> items = null;
@@ -86,7 +85,15 @@ public class ItemsController {
 			}
 		}
 		items = items.stream().filter(Item::isActive).collect(Collectors.toList());
-		model.addAttribute("searchTerms", searchTerms);
+		if (searchTerms != null) {
+			var storage = new HashMap<Integer, Term>();
+			for (var term: searchTerms) {
+				storage.put(term.traitID, term);
+			}
+			model.addAttribute("searchTerms", storage);
+		} else {
+			model.addAttribute("searchTerms", null);
+		}
 		model.addAttribute("catTraits", catTraits);
 		model.addAttribute("category", category);
 		model.addAttribute("stringTraitValues", stringTraitValues);

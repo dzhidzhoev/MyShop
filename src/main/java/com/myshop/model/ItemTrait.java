@@ -96,6 +96,8 @@ public class ItemTrait {
 	private String value;
 	private Integer valueInt;
 	
+	public ItemTrait() {
+	}
 	public String getValue() {
 		return value;
 	}
@@ -105,6 +107,9 @@ public class ItemTrait {
 	}
 	public int getValueInt() {
 		return valueInt == null ? 0 : valueInt;
+	}
+	public Integer getValueIntOrNull() {
+		return valueInt;
 	}
 	public ItemTrait setValueInt(Integer valueInt) {
 		this.valueInt = valueInt;

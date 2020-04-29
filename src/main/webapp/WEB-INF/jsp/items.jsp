@@ -17,14 +17,18 @@
 <form>
 <div class="form-group characteristics">
 <label><b>Цена</b></label><br>
-<input id="min-price" type="number" placeholder="От" class="form-control-range"/>
-<input id="max-price" type="number" placeholder="До" class="form-control-range"/>
+<input id="min-price" type="number" placeholder="От" class="form-control-range" value="${param.minPrice }" />
+<input id="max-price" type="number" placeholder="До" class="form-control-range" value="${param.maxPrice }" />
 </div>
 </form>
 
 <c:forEach items="${catTraits }" var="trait">
 	<div class="form-group characteristics">
-		<label><c:out value="${trait.getName() }"></c:out>&nbsp;<b><span id="slider-val-${trait.getId() }"></span></b> <c:if test="${trait.getType() eq 'IntType'}"><a href="javascript:;" onclick="$('#slider-val-${trait.getId() }').text(''); $('#slider-${trait.getId() }').slider('refresh');" >x</a></c:if></label><br>
+		<label>
+			<c:out value="${trait.getName() }">
+			</c:out>&nbsp;<b>
+			<span id="slider-val-${trait.getId() }"><c:if test="${trait.getType() eq 'IntType' && searchTerms.containsKey(trait.getId())}"><c:out value="${searchTerms.get(trait.getId()).minSegmentVal}" /> - <c:out value="${searchTerms.get(trait.getId()).maxSegmentVal}" /></c:if></span></b> <c:if test="${trait.getType() eq 'IntType'}"><a href="javascript:;" onclick="$('#slider-val-${trait.getId() }').text(''); $('#slider-${trait.getId() }').slider('refresh');" >x</a></c:if>
+		</label><br>
 		<c:choose>
 		<c:when test="${trait.getType() eq 'IntType' }">
 			<div class="form-row">
@@ -32,7 +36,7 @@
 			<c:out value="${trait.getMinValue() }"></c:out>
 			</div>
 			<div class="col">
-			<input id="slider-${trait.getId() }" class="filter-slider" type="text" class="span2" value="" data-slider-min="${trait.getMinValue() }" data-slider-max="${trait.getMaxValue() }" data-slider-step="1" data-slider-value="[${trait.getMinValue() },${trait.getMaxValue() }]"/>
+			<input id="slider-${trait.getId() }" class="filter-slider" type="text" class="span2" value="" data-slider-min="${trait.getMinValue() }" data-slider-max="${trait.getMaxValue() }" data-slider-step="1" data-slider-value="[${searchTerms.containsKey(trait.getId()) ? searchTerms.get(trait.getId()).minSegmentVal : trait.getMinValue() },${searchTerms.containsKey(trait.getId()) ? searchTerms.get(trait.getId()).maxSegmentVal : trait.getMaxValue() }]"/>
 			</div>
 			<div class="col text-right">
 			<c:out value="${trait.getMaxValue() }"></c:out>
@@ -49,7 +53,7 @@
 		<c:when test="${trait.getType() eq 'EnumType' }">
 			<c:forEach items="${trait.getValues() }" varStatus="i" var="traitVal">
 				<div class="form-check">
-				  <input class="form-check-input filter-checkbox" type="checkbox" value="" id="check-${trait.getId() }-${i.index }">
+				  <input class="form-check-input filter-checkbox" type="checkbox" ${(searchTerms.containsKey(trait.getId()) && searchTerms.get(trait.getId()).oneOfValues.contains(traitVal)) ? 'checked' : '' } value="" id="check-${trait.getId() }-${i.index }">
 				  <label class="form-check-label" for="check-${trait.getId() }-${i.index }" id="check-label-${trait.getId() }-${i.index }">
 				    <c:out value="${traitVal }"></c:out>
 				  </label>
@@ -59,7 +63,7 @@
 		<c:when test="${trait.getType() eq 'StringType'}">
 			<c:forEach items="${stringTraitValues.get(trait.getId()) }" varStatus="i" var="traitVal">
 				<div class="form-check">
-				  <input class="form-check-input filter-checkbox" type="checkbox" value="" id="check-${trait.getId() }-${i.index }">
+				  <input class="form-check-input filter-checkbox" type="checkbox" ${(searchTerms.containsKey(trait.getId()) && searchTerms.get(trait.getId()).oneOfValues.contains(traitVal)) ? 'checked' : '' } value="" id="check-${trait.getId() }-${i.index }">
 				  <label class="form-check-label" for="check-${trait.getId() }-${i.index }" id="check-label-${trait.getId() }-${i.index }">
 				    <c:out value="${traitVal }"></c:out>
 				  </label>

@@ -17,7 +17,7 @@
 
 		<div class="col-sm-10">
 			<h1>
-			<input type="text" readonly class="form-control-plaintext form-control-lg" value="${fn:escapeXml(item.getName()) }" placeholder="Название товара" />
+			<input type="text" class="form-control-plaintext form-control-lg" value="${fn:escapeXml(item.getName()) }" placeholder="Название товара" />
 			</h1>
 
 		</div>
@@ -52,10 +52,9 @@
 
 	<a href="#" class="btn btn-primary">В корзину!</a><br> <!-- TODO -->
 	<c:if test="${isUserAdmin }">
-	<a href="item.php?edit=1">Редактировать (видна только администраторам)</a><br>
-
-	<a href="index.php">Удалить (видна только администраторам)</a>
+	<a href="/admin/item?id=${item.id }">Редактировать</a><br>
 	</c:if>
+	<a href="/admin/item?id=${item.id }">Удалить</a><br>
 	<p><p>
 	<c:out value="${item.getDescription()}" />
 	</div>
