@@ -172,7 +172,19 @@ function doFilter() {
     	<div class="card-body">
     		<a href="/item?id=${item.getId() }"><h5 class="card-title"><c:out value="${item.getName() }"></c:out></h5></a>
     		<p class="card-text"><c:out value="${item.getPrice() }"></c:out>&nbsp;руб.</p>
-        	<a href="#" class="btn btn-primary">В корзину!</a>
+    		<c:choose>
+    		<c:when test="${param.addedId == item.id}">
+    			<a href="/user/cart" class="btn btn-success">Добавлено</a>
+    		</c:when>
+    		<c:otherwise>
+	    		<form method="post" action="/user/add_to_cart">
+					<input type="hidden" name="count" value="1">
+					<input type="hidden" name="itemId" value="${item.id }" >
+					<input type="hidden" name="redir" value="${requestScope['javax.servlet.forward.request_uri'].concat('?').concat(requestScope['javax.servlet.forward.query_string']).concat('&addedId=').concat(item.id)}" >
+					<input type="submit" value="В корзину!" class="btn btn-primary">
+				</form>
+    		</c:otherwise>
+    		</c:choose>
     	</div>
     </div>
 </c:forEach>

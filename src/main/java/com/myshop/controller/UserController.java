@@ -46,14 +46,19 @@ public class UserController {
 	@Autowired ShopAuthProvider authProvider;
 	@Autowired JavaMailSender mailSender;
 	
-	private Integer getLoggedUserId() {
+	public User getLoggedUser() {
 		var security = SecurityContextHolder.getContext();
 		if (security.getAuthentication() == null 
 				|| !(security.getAuthentication().getPrincipal() instanceof ShopUserPrincipal)) {
 			return null;
 		}
 		ShopUserPrincipal principal = (ShopUserPrincipal) security.getAuthentication().getPrincipal();
-		return principal.getUser() != null ? principal.getUser().getId() : null;
+		return principal.getUser();
+	}
+	
+	public Integer getLoggedUserId() {
+		var user = getLoggedUser();
+		return user != null ? user.getId() : null;
 	}
 	
 	@RequestMapping(value="/login",method=RequestMethod.GET)

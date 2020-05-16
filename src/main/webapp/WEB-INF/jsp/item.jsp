@@ -43,18 +43,31 @@
 	<h4>${item.getPrice() } руб.
 	</h4>
 	<div class="my-auto">
-     		<a href="#">+</a>  	
-        	<b>1
+     		<span class="btn-link" onclick="$('#item-counter').text(parseInt($('#item-counter').text()) + 1)">+</span>  	
+        	<b>
+        	<span id="item-counter">
+        	1
+    		</span>
     		</b>
-    		<a href="#">-</a>
+    		<span class="btn-link" onclick="if (parseInt($('#item-counter').text()) > 1) {$('#item-counter').text(parseInt($('#item-counter').text()) - 1);}">-</span>
         </div>
 	<p>
 
-	<a href="#" class="btn btn-primary">В корзину!</a><br> <!-- TODO -->
+	<c:if test="${not empty param.added }">
+		<a href="/user/cart" class="btn btn-success">Добавлено в корзину</a><br>
+	</c:if>
+	<c:if test="${empty param.added}">
+		<form id="add-to-cart-form" method="post" action="/user/add_to_cart">
+			<input type="hidden" name="count" id="count-form-input">
+			<input type="hidden" name="itemId" value="${item.id }" >
+		</form>
+		<button onclick="$('#count-form-input').val(parseInt($('#item-counter').text())); $('#add-to-cart-form').submit();" class="btn btn-primary">В корзину!</button><br> <!-- TODO -->
+	</c:if>
+	
 	<c:if test="${isUserAdmin }">
 	<a href="/admin/item?id=${item.id }">Редактировать</a><br>
-	</c:if>
 	<a href="/admin/item?id=${item.id }">Удалить</a><br>
+	</c:if>
 	<p><p>
 	<c:out value="${item.getDescription()}" />
 	</div>

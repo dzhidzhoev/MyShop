@@ -90,6 +90,9 @@ public class User {
 		this.pwdChangeToken = pwdChangeToken;
 		return this;
 	}
+	public boolean isAdmin() {
+		return isAdmin == null ? false : isAdmin;
+	}
 	public Boolean isAdminOrNull() {
 		return isAdmin;
 	}
