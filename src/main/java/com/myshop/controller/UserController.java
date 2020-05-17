@@ -37,6 +37,8 @@ import com.myshop.repository.UserRepository;
 
 @Controller
 public class UserController {
+	public static final String ADMIN_USERS_PATH = "/admin/users";
+	
 	private static final String SAME_PWD = "samePwd";
 	private static final String ERROR_MESSAGE = "errorMessage";
 	
@@ -259,5 +261,17 @@ public class UserController {
 		}
 		fillModelData(model, user.getId(), user.getLastName(), user.getFirstName(), user.getMiddleName(), user.getPhone(), user.getAddress(), user.getEmail(), "", "");
 		return "profile";
+	}
+	
+	@GetMapping(ADMIN_USERS_PATH)
+	public String showUsersManagement(Model model) {
+		model.addAttribute("users", userRepo.findAll());
+		return "users";
+	}
+	
+	@PostMapping("/admin/delete_user")
+	public String deleteUser(int id) {
+		userRepo.deleteById(id);
+		return "redirect:" + ADMIN_USERS_PATH;
 	}
 }

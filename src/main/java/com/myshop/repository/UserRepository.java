@@ -154,6 +154,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 				.setAddress(address)
 				.setEmail(email)
 				.setPwdHash(pwdHash)
+				.setAdmin(id != null ? findById(id).get().isAdminOrNull() : null)
 				.setEmailToken(UUID.randomUUID().toString());
 		if (id != null) {
 			user.setId(id);
