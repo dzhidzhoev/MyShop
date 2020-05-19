@@ -66,7 +66,7 @@
 	
 	<c:if test="${isUserAdmin }">
 	<a href="/admin/item?id=${item.id }">Редактировать</a><br>
-	<a href="/admin/item?id=${item.id }">Удалить</a><br>
+	<a href="/admin/delete_item?id=${item.id }">Удалить</a><br>
 	</c:if>
 	<p><p>
 	<c:out value="${item.getDescription()}" />

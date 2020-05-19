@@ -18,6 +18,7 @@ import com.myshop.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Integer> {
+	public List<User> findByIsDeletedFalse();
 	public Optional<User> findByEmailIgnoreCase(String email);
 	public Optional<User> findByEmailIgnoreCaseAndPwdHashIgnoreCase(String email, String pwdHash);
 	public List<User> findByEmailToken(String emailToken);

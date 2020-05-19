@@ -37,13 +37,21 @@
 	<c:forEach items="${users}" var="user">
 	    <tr>
 	      <th scope="row">${user.id}</th>
-	      <td><a href="user-admin.php">${user.email}</a></td>
+	      <td>${user.isDeleted() ? '<strike>' : '<a href="user-admin.php">'}${user.email}${user.isDeleted() ? '</strike>' : '</a>'}</a></td> <!-- TODO -->
 	      <td><input type="checkbox" disabled="disabled" ${user.isAdmin() ? 'checked="checked"' : ''}/></td>
 	      <td>
-	      	<form action="/admin/delete_user" method="post">
-	      		<input type="hidden" name="id" value="${user.id}">
-	      		<input type="submit" value="Удалить" class="btn btn-danger"> <!--  TODO -->
-	      	</form>
+	      	<c:if test="${user.deleted }">
+	      		<form action="/admin/restore_user" method="post">
+		      		<input type="hidden" name="id" value="${user.id}">
+		      		<input type="submit" value="Восстановить" class="btn btn-warning">
+		      	</form>
+	      	</c:if>
+	      	<c:if test="${not user.deleted }">
+		      	<form action="/admin/delete_user" method="post">
+		      		<input type="hidden" name="id" value="${user.id}">
+		      		<input type="submit" value="Удалить" class="btn btn-danger">
+		      	</form>
+	      	</c:if>
 	      </td>
 	    </tr>
     </c:forEach>

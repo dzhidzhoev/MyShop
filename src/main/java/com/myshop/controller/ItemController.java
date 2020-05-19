@@ -136,6 +136,14 @@ public class ItemController {
 		return "redirect:/admin/item?id=" + item.getId();
 	}
 	
+	@PostMapping("/admin/delete_item")
+	public String deleteItem(int id) {
+		Item item = itemRepo.findById(id).get();
+		int categoryId = item.getCategory().getId();
+		// TODO
+		return "redirect:/?categoryId=" + categoryId;
+	}
+	
 	@GetMapping(value="/item_image")
 	@ResponseBody
 	public byte[] getImage(@RequestParam int id) throws IOException {

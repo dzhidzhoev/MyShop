@@ -277,11 +277,19 @@ public class UserController {
 	
 	@PostMapping("/admin/delete_user")
 	public String deleteUser(int id) throws UnsupportedEncodingException {
-		if (getLoggedUserId() != id) {
-			userRepo.deleteById(id);
+		User user = userRepo.findById(id).get();
+		if (getLoggedUserId() != user.getId()) {
+			userRepo.save(user.setDeleted(true));
 		} else {
 			return "redirect:" + ADMIN_USERS_PATH + "?errorMessage=selfdelete";
 		}
+		return "redirect:" + ADMIN_USERS_PATH;
+	}
+	
+	@PostMapping("/admin/restore_user")
+	public String restoreUser(int id) {
+		userRepo.save(userRepo.findById(id).get().setDeleted(false));
+		
 		return "redirect:" + ADMIN_USERS_PATH;
 	}
 }
