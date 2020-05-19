@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.myshop.model.Category;
-import com.myshop.model.CategoryTrait;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.CategoryTraitRepository;
 import com.myshop.repository.TraitRepository;

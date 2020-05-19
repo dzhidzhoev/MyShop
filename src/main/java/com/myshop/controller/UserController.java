@@ -2,10 +2,7 @@ package com.myshop.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +12,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,7 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.myshop.ShopAuthProvider;
 import com.myshop.ShopUserPrincipal;
 import com.myshop.model.User;
+import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.UserRepository;
 
@@ -45,6 +41,7 @@ public class UserController {
 	@Autowired Environment env;
 	@Autowired UserRepository userRepo;
 	@Autowired OrderRepository orderRepo;
+	@Autowired CategoryRepository catRepo;
 	@Autowired ShopAuthProvider authProvider;
 	@Autowired JavaMailSender mailSender;
 	
@@ -248,6 +245,7 @@ public class UserController {
 		if (userId == null) {
 			return "redirect:/login";
 		}
+		model.addAttribute("allCategories", catRepo.findAll());
 		var user = userRepo.findById(userId).get();
 		model.addAttribute("user", user);
 		Pageable order = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("orderTime").descending());

@@ -74,9 +74,11 @@
 </div>
 </div>
 
+<c:if test="${isUserAdmin}">
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+    <form action="/admin/add_item" method="post">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Выберите категорию</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -84,21 +86,21 @@
         </button>
       </div>
       <div class="modal-body form-group">
-        <input list="categories" name="browser" width="1000" placeholder="Кликните дважды" autocomplete="off">
-          <datalist id="categories">
-            <option value="Холодильники">
-            <option value="Холодильники">
-            <option value="Холодильники">
-            <option value="Холодильники">
-          </datalist>
+  		<select name="categoryId">
+	       	<c:forEach items="${allCategories}" var="cat">
+	       		<option value="${cat.id}">${fn:escapeXml(cat.name)}</option>
+	       	</c:forEach>
+  		</select>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-        <a href="item.php?edit=1" type="submit" class="btn btn-primary">Создать</a>
+        <button type="submit" class="btn btn-success">Создать</button>
       </div>
+    </form>
     </div>
   </div>
-</div> <!-- TODO -->
+</div>
+</c:if>
 
 
 <%@ include file="footer.jspf" %>

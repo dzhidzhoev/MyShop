@@ -137,6 +137,14 @@ public class ItemController {
 		return "redirect:/admin/item?id=" + item.getId();
 	}
 	
+	@PostMapping("/admin/add_item")
+	public String addItem(int categoryId) {
+		var cat = catRepo.findById(categoryId).get();
+		var item = new Item().setCategory(cat).setName("Новый товар " + cat.getName()).setActive(false);
+		item = itemRepo.save(item);
+		return "redirect:/admin/item?id=" + item.getId();
+	}
+	
 	@GetMapping(value="/item_image")
 	@ResponseBody
 	public byte[] getImage(@RequestParam int id) throws IOException {
