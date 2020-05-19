@@ -170,7 +170,7 @@ function doFilter() {
     	<img class="card-img-top" width="200" height="200" src="/item_image?id=${item.getId() }" />
     	</a>
     	<div class="card-body">
-    		<a href="/item?id=${item.getId() }"><h5 class="card-title"><c:out value="${item.getName() }"></c:out></h5></a>
+    		${!item.active ? '<strike>' : ''}<a href="/item?id=${item.getId() }"><h5 class="card-title"><c:out value="${item.getName() }"></c:out></h5></a>${!item.active ? '</strike>' : ''}
     		<p class="card-text"><c:out value="${item.getPrice() }"></c:out>&nbsp;руб.</p>
     		<c:choose>
     		<c:when test="${param.addedId == item.id}">

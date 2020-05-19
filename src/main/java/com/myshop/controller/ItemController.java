@@ -44,13 +44,14 @@ public class ItemController {
 	@Autowired CategoryTraitRepository catTraitRepo;
 	@Autowired ItemTraitRepository itemTraitRepo;
 	@Autowired TraitRepository traitRepo;
+	@Autowired CommonController common;
 	
 	private Gson gson = new Gson();
 	
 	@RequestMapping(value="/item",method=RequestMethod.GET)
 	public String view(Model model, @RequestParam int id) throws NotFoundException {
 		Item item = itemRepo.findById(id).get();
-		if (!item.isActive()) {
+		if (!item.isActive() && !common.isUserAdmin()) {
 			throw new NotFoundException("No value present");
 		}
 		model.addAttribute("tRepo", traitRepo);
@@ -136,19 +137,11 @@ public class ItemController {
 		return "redirect:/admin/item?id=" + item.getId();
 	}
 	
-	@PostMapping("/admin/delete_item")
-	public String deleteItem(int id) {
-		Item item = itemRepo.findById(id).get();
-		int categoryId = item.getCategory().getId();
-		// TODO
-		return "redirect:/?categoryId=" + categoryId;
-	}
-	
 	@GetMapping(value="/item_image")
 	@ResponseBody
 	public byte[] getImage(@RequestParam int id) throws IOException {
 		var item = itemRepo.findById(id);
-		if (item.isPresent() && !item.get().isActive()) {
+		if (item.isPresent() && !item.get().isActive() && !common.isUserAdmin()) {
 			return defaultItemImage();
 		}
 		var img = itemRepo.getImageById(id);

@@ -1,5 +1,6 @@
 package com.myshop.controller;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,9 @@ public class CommonController {
 			return "Завершён";
 		case Processing:
 			return "В обработке";
+		default:
+			throw new InvalidParameterException("unsupported OrderStatus value");
 		}
-		return "Неизвестен";
 	}
 	
 	public static String getOrderStatusHTML(OrderStatus status) {

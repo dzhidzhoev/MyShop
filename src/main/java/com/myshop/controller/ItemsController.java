@@ -33,6 +33,7 @@ public class ItemsController {
 	@Autowired ItemTraitRepository itemTraitRepo;
 	@Autowired TraitRepository traitRepo;
 	@Autowired CategoryRepository catRepo;
+	@Autowired CommonController common;
 	
 	@GetMapping("/")
 	public String showItems(Model model,
@@ -40,6 +41,8 @@ public class ItemsController {
 			@RequestParam(name = "searchTerms", required = false) Set<Term> searchTerms,
 			@RequestParam Optional<Integer> minPrice, @RequestParam Optional<Integer> maxPrice
 			) throws NotFoundException {
+		boolean isAdmin = common.isUserAdmin();
+		
 		Collection<Item> items = null;
 		Collection<Trait> catTraits = null;
 		Category category = null;
@@ -84,7 +87,7 @@ public class ItemsController {
 				items = itemRepo.findItemsByTerms(category, searchTerms, minPrice.orElse(null), maxPrice.orElse(null));
 			}
 		}
-		items = items.stream().filter(Item::isActive).collect(Collectors.toList());
+		items = items.stream().filter(i -> i.isActive() || isAdmin).collect(Collectors.toList());
 		if (searchTerms != null) {
 			var storage = new HashMap<Integer, Term>();
 			for (var term: searchTerms) {

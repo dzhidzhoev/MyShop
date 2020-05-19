@@ -29,9 +29,6 @@
 	</div>
 	<div class="col-sm">
 	Категория: <c:out value="${item.getCategory().getName() }" />
-	<%-- <form:select readonly="" class="form-control-plaintext" path="item.category.id">
-		<form:options items="${menuCategories }" itemValue="id" itemLabel="name"/>
-	</form:select> --%>
 	<p>
 	
 	<c:forEach items="${traits }" var="trait">
@@ -66,7 +63,6 @@
 	
 	<c:if test="${isUserAdmin }">
 	<a href="/admin/item?id=${item.id }">Редактировать</a><br>
-	<a href="/admin/delete_item?id=${item.id }">Удалить</a><br>
 	</c:if>
 	<p><p>
 	<c:out value="${item.getDescription()}" />

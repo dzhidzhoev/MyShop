@@ -20,19 +20,19 @@
 
 <c:if test="${isUserAdmin}">
 <div class="row bg-light">
-<div class="col m-2 text-right">
+<div class="col m-1 text-right">
 <a href="orders.php">Заказы</a>&nbsp;
 </div>
-<div class="col m-2 text-center">
+<div class="col m-1 text-center">
 <a href="<%=UserController.ADMIN_USERS_PATH%>">Пользователи</a>
 </div>
-<div class="col m-2 text-left">
+<div class="col m-1 text-center">
 <a href="<%=CategoryController.ADMIN_CATEGORIES_PATH%>">Категории товаров</a>
 </div>
-<div class="col m-2 text-left">
+<div class="col m-1 text-center">
 <a href="<%=TraitController.ADMIN_TRAITS_PATH%>">Свойства товаров</a>
 </div>
-<div class="col m-2 text-left">
+<div class="col m-2 text-center">
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
   Добавить товар
 </button>
