@@ -20,6 +20,9 @@
 </div>
 <div class="row">
 <div class="col m-2 text-center">
+<c:if test="${param.errorMessage eq 'selfdelete'}">
+<div class="text-danger">Невозможно удалить самого себя!</div><br>
+</c:if>
 
 <table class="table">
   <thead>
@@ -39,7 +42,7 @@
 	      <td>
 	      	<form action="/admin/delete_user" method="post">
 	      		<input type="hidden" name="id" value="${user.id}">
-	      		<input type="submit" value="Удалить" class="btn btn-danger">
+	      		<input type="submit" value="Удалить" class="btn btn-danger"> <!--  TODO -->
 	      	</form>
 	      </td>
 	    </tr>

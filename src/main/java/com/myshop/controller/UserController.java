@@ -269,9 +269,19 @@ public class UserController {
 		return "users";
 	}
 	
+	@GetMapping("/admin/user")
+	public String showUserManagement(Model model, int id) {
+		model.addAttribute("user", userRepo.findById(id));
+		return "user-admin";
+	}
+	
 	@PostMapping("/admin/delete_user")
-	public String deleteUser(int id) {
-		userRepo.deleteById(id);
+	public String deleteUser(int id) throws UnsupportedEncodingException {
+		if (getLoggedUserId() != id) {
+			userRepo.deleteById(id);
+		} else {
+			return "redirect:" + ADMIN_USERS_PATH + "?errorMessage=selfdelete";
+		}
 		return "redirect:" + ADMIN_USERS_PATH;
 	}
 }
