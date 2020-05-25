@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<form action="${action_url}" method="post">
+<form id="register-or-update-form" action="${action_url}" method="post">
 	<c:if test="${form_userId != null}">
 		<input type="hidden" name="userId" value="${form_userId}" />
 	</c:if>
@@ -36,9 +36,9 @@
   <c:choose>
   	<c:when test="${edit_admin == 'true' }">
   		<div class="form-check">
-	        <input type="checkbox"id="exampleCheck3" autocomplete="off" checked>
+	        <input type="checkbox" name="isAdmin" id="exampleCheck3" autocomplete="off" ${form_isAdmin ? 'checked' : ''}>
 	        <label for="exampleCheck3">Является администратором</label>
-	    </div><p>После обновления перебрасывает в список пользователей<br>
+	    </div>
   	</c:when>
   	<c:otherwise>	
 	  <div class="form-group">
@@ -51,10 +51,9 @@
 	  </div>
   	</c:otherwise>
   </c:choose>
-  <c:if test="${errorMessage != null }">
-  	<div class="text-danger">Ошибка! ${errorMessage }</div>
-  </c:if>
-  <button type="submit" class="btn m-2 btn-success">
+  <div class="text-danger" id="error-message-text-reg"><c:if test="${errorMessage != null }">Ошибка! ${errorMessage }</c:if></div>
+  <input type="hidden" name="redirectPath" value="${redirectPath}" />
+  <button type="submit" class="btn m-2 btn-success" id="register-or-update-form-submit">
 ${action }
 </button>
 </form>

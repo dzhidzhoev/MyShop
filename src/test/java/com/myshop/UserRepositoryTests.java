@@ -53,6 +53,10 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 	
 	@Test
 	public void logInTest() {
+		// null
+		assertEquals(userRepo.logIn(null, "1").isPresent(), false);
+		assertEquals(userRepo.logIn("1@1.com", null).isPresent(), false);
+		assertEquals(userRepo.logIn(null, null).isPresent(), false);
 		// all ok
 		assertEquals(userRepo.logIn("1@1.com", "1").get().getId(), 1);
 		// other case
@@ -83,7 +87,7 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		assertFalse(userRepo.isPasswordValid(""));
 	}
 	
-	private static class Suite<T> {
+	public static class Suite<T> {
 		T val;
 		T result;
 		boolean good;
@@ -95,7 +99,7 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		}
 	}
 	
-	private void fillInternal(ArrayList<Integer> choice, List<List<Suite<? extends Object>>> vals,
+	private static void fillInternal(ArrayList<Integer> choice, List<List<Suite<? extends Object>>> vals,
 			ArrayList<ArrayList<Object>> res) {
 		if (choice.size() == vals.size()) {
 			boolean result = true;
@@ -123,7 +127,7 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		}
 	}
 	
-	protected void fill(List<List<Suite<? extends Object>>> vals,
+	public static void fill(List<List<Suite<? extends Object>>> vals,
 			ArrayList<ArrayList<Object>> res) {
 		fillInternal(new ArrayList<>(), vals, res);
 	}
@@ -151,6 +155,7 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 				new Suite<>(null, null, true),
 				new Suite<>("", "", true),
 				new Suite<>("1", null, false),
+				new Suite<>(INITIAL_PWD, userRepo.getPasswordHash(INITIAL_PWD), true),
 				new Suite<>("abcdef123", userRepo.getPasswordHash("abcdef123"), true));
 		var before = Lists.list(
 			lastNames,
@@ -239,14 +244,19 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		
 		assertFalse(userRepo.findByEmailIgnoreCase(INITIAL_EMAIL).isPresent());
 		
-		final int UPDATE_USER_ID = registerUserTestEmail(false, null, "Ivanov", "Ivan", null, null, null, INITIAL_EMAIL, INITIAL_PWD, "Ivanov", "Ivan", null, null, null, INITIAL_EMAIL, userRepo.getPasswordHash(INITIAL_PWD), true);
+		final String INITIAL_PWD_HASH = userRepo.getPasswordHash(INITIAL_PWD);
+		final int UPDATE_USER_ID = registerUserTestEmail(false, null, "Ivanov", "Ivan", null, null, null, INITIAL_EMAIL, INITIAL_PWD, "Ivanov", "Ivan", null, null, null, INITIAL_EMAIL, INITIAL_PWD_HASH, true);
 		assertTrue(userRepo.findById(UPDATE_USER_ID).isPresent());
 		
 		boolean pwdChanges = password != null && !password.isEmpty();
-		passwordRes = pwdChanges ? passwordRes : userRepo.getPasswordHash(INITIAL_PWD);
+		passwordRes = pwdChanges ? passwordRes : INITIAL_PWD_HASH;
 		// all ok
 		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100@100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
 		passwordRes = pwdChanges ? passwordRes : userRepo.findById(UPDATE_USER_ID).get().getPwdHash();
+		// login and password simultaneously
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100@101.com", password + "100", lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, null, null, false);
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100@101.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@101.com", passwordRes, good);
+		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "100@100.com", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
 		// spaces
 		passwordRes = pwdChanges ? passwordRes : userRepo.findById(UPDATE_USER_ID).get().getPwdHash();
 		registerUserTestEmail(false, UPDATE_USER_ID, lastName, firstName, middleName, phoneNumber, address, "   100@100.com\t", password, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, "100@100.com", passwordRes, good);
@@ -333,6 +343,13 @@ public class UserRepositoryTests extends AbstractTestNGSpringContextTests {
 		userRepo.approveEmail("smth");
 		assertTrue(userRepo.orderingAvailable(1));
 		assertFalse(userRepo.orderingAvailable(2));
+		
+		// check deleted
+		assertTrue(userRepo.saveAndFlush(userRepo.findById(2).get().setDeleted(true)).isDeleted());
+		userRepo.approveEmail("smth2");
+		assertFalse(userRepo.orderingAvailable(2));
+		assertFalse(userRepo.saveAndFlush(userRepo.findById(2).get().setDeleted(false)).isDeleted());
+		
 		userRepo.approveEmail("smth2");
 		assertTrue(userRepo.orderingAvailable(1));
 		assertTrue(userRepo.orderingAvailable(2));

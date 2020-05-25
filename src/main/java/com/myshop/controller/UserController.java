@@ -2,6 +2,7 @@ package com.myshop.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -65,7 +66,7 @@ public class UserController {
 		return "login";
 	}
 	
-	@RequestMapping(value="/register", method = RequestMethod.GET)
+	@GetMapping("/register")
 	public String showRegister(Model model,
 			@RequestParam(name = SAME_PWD, required = false) String samePwd,
 			@RequestParam(name = ERROR_MESSAGE, required = false) String errorMessage) {
@@ -87,7 +88,7 @@ public class UserController {
 			@RequestParam(name = "email") String email, 
 			@RequestParam(name = "password") String password,
 			@RequestParam(name = "password2") String password2) throws UnsupportedEncodingException {
-		return registerOrUpdate(model, request, "register", null, lastName, firstName, middleName, phoneNumber, address, email, password,
+		return registerOrUpdate(model, request, "register", true, null, lastName, firstName, middleName, phoneNumber, address, email, password,
 				password2);
 	}
 	
@@ -100,16 +101,21 @@ public class UserController {
 			@RequestParam(name = "phoneNumber") String phoneNumber, 
 			@RequestParam(name = "address") String address, 
 			@RequestParam(name = "email") String email, 
-			@RequestParam(name = "password") String password,
-			@RequestParam(name = "password2") String password2) throws UnsupportedEncodingException {
+			@RequestParam(name = "password") Optional<String> password,
+			@RequestParam(name = "password2") Optional<String> password2,
+			@RequestParam Optional<String> redirectPath) throws UnsupportedEncodingException {
 		var userId = getLoggedUserId();
 		if (userId == null) {
 			return "redirect:/login";
 		}
 		var user = userRepo.findById(userId).get();
-		if (Boolean.valueOf(true).equals(user.isAdminOrNull()) || Integer.valueOf(user.getId()).equals(id)) {
-			return registerOrUpdate(model, request, "redirect:/profile", id, lastName, firstName, middleName, phoneNumber, address, email, password,
-					password2);
+//		if (!password.orElse("").isEmpty() && id != null && user.getId() != id) {
+//			throw new SecurityException("access denied");
+//		} TODO
+		if (user.isAdmin() || Integer.valueOf(user.getId()).equals(id)) {
+			boolean sendEmail = !email.trim().equals(user.getEmail());
+			return registerOrUpdate(model, request, "redirect:/profile", sendEmail, id, lastName, firstName, middleName, phoneNumber, address, email, password.orElse(""),
+					password2.orElse(""), redirectPath.orElse("/profile"));
 		} else {
 			return "redirect:/login";
 		}
@@ -119,6 +125,7 @@ public class UserController {
 			String phoneNumber, String address, String email, String password, String password2) {
 		if (id != null) {
 			model.addAttribute("form_userId", id);	
+			model.addAttribute("form_isAdmin", userRepo.findById(id).map(u -> u.isAdmin()).orElse(false));
 		}
 		model.addAttribute("form_lastName", lastName);
 		model.addAttribute("form_firstName", firstName);
@@ -130,45 +137,44 @@ public class UserController {
 		model.addAttribute("form_password1", password2);
 	}
 	
-	private String registerOrUpdate(Model model, HttpServletRequest request, String errorUrl, Integer id, String lastName, String firstName,
-			String middleName, String phoneNumber, String address, String email, String password, String password2)
+	private String registerOrUpdate(Model model, HttpServletRequest request, String errorUrl, boolean sendVerificationEmail, Integer id, String lastName, String firstName,
+			String middleName, String phoneNumber, String address, String email, String password, String password2) throws UnsupportedEncodingException {
+		return registerOrUpdate(model, request, errorUrl, sendVerificationEmail, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2, "/profile");
+	}
+	
+	private String registerOrUpdate(Model model, HttpServletRequest request, String errorUrl, boolean sendVerificationEmail, Integer id, String lastName, String firstName,
+			String middleName, String phoneNumber, String address, String email, String password, String password2, String successUrl)
 			throws UnsupportedEncodingException {
-		Function<String, String> prepareParams = (String msg) -> {
-			if (errorUrl.startsWith("redirect:")) {
-				return msg;
-			} else {
-				return "";
-			}
-		};
-		
 		if (!password.equals(password2)) {
 			model.addAttribute(SAME_PWD, true);
+			model.addAttribute(ERROR_MESSAGE, URLEncoder.encode("Пароли должны совпадать", "UTF-8"));
 			fillModelData(model, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2);
-			return errorUrl + prepareParams.apply("?samePwd=true");
+			return errorUrl;
 		}
 		var attempt = userRepo.registerUser(id, lastName, firstName, middleName, phoneNumber, address, email, password);
 		if (attempt.getFirst().isEmpty()) {
-			model.addAttribute(ERROR_MESSAGE, attempt.getSecond() + "");
+			model.addAttribute(ERROR_MESSAGE, attempt.getSecond());
 			fillModelData(model, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2);
-			return errorUrl + prepareParams.apply("?errorMessage=" + URLEncoder.encode(attempt.getSecond() + "", "UTF-8"));
+			return errorUrl;
 		}
 		
 		if (id == null) {
 			var user = attempt.getFirst().get();
 			SecurityContextHolder.getContext().setAuthentication(
 					authProvider.authenticate(new UsernamePasswordAuthenticationToken(email, password)));
-			
-			SimpleMailMessage msg = new SimpleMailMessage();
-			msg.setTo(user.getEmail());
-			msg.setSubject("Подтверждение пароля - MyShop");
-			msg.setText("Для подтверждения пароля перейдите по ссылке " +
-					"http://" + request.getLocalName() + "/confirm?email=" + URLEncoder.encode(user.getEmail(), "UTF-8") +
-					"&token=" + URLEncoder.encode(user.getEmailToken(), "UTF-8"));
-			msg.setFrom(env.getProperty("spring.mail.username"));
-			mailSender.send(msg);
+			if (sendVerificationEmail && !env.getProperty("debug.dont_send_verification_email", "").equals("true")) {
+				SimpleMailMessage msg = new SimpleMailMessage();
+				msg.setTo(user.getEmail());
+				msg.setSubject("Подтверждение аккаунта - MyShop");
+				msg.setText("Для подтверждения аккаунта перейдите по ссылке " +
+						"http://" + request.getLocalName() + "/confirm?email=" + URLEncoder.encode(user.getEmail(), "UTF-8") +
+						"&token=" + URLEncoder.encode(user.getEmailToken(), "UTF-8"));
+				msg.setFrom(env.getProperty("spring.mail.username"));
+				mailSender.send(msg);
+			}
 		}
 		
-		return "redirect:/profile";
+		return "redirect:" + successUrl;
 	}
 	
 	@GetMapping("/confirm")
@@ -269,7 +275,9 @@ public class UserController {
 	
 	@GetMapping("/admin/user")
 	public String showUserManagement(Model model, int id) {
-		model.addAttribute("user", userRepo.findById(id));
+		User user = userRepo.findById(id).get();
+		model.addAttribute("user", user);
+		fillModelData(model, user.getId(), user.getLastName(), user.getFirstName(), user.getMiddleName(), user.getPhone(), user.getAddress(), user.getEmail(), "", "");
 		return "user-admin";
 	}
 	
@@ -279,7 +287,7 @@ public class UserController {
 		if (getLoggedUserId() != user.getId()) {
 			userRepo.save(user.setDeleted(true));
 		} else {
-			return "redirect:" + ADMIN_USERS_PATH + "?errorMessage=selfdelete";
+			return "redirect:" + ADMIN_USERS_PATH + "?" + ERROR_MESSAGE + "=selfdelete";
 		}
 		return "redirect:" + ADMIN_USERS_PATH;
 	}

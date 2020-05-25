@@ -69,6 +69,7 @@
         <c:set var="action_url" value="update_user_info"></c:set>
 		<c:set var="edit_admin" value="false"></c:set>
 		<c:set var="action" value="Обновить данные"></c:set>
+		<c:set var="redirectPath" value="/profile"></c:set>
 		<%@ include file="admin/userdata.jspf" %>
     </div>
 </div>

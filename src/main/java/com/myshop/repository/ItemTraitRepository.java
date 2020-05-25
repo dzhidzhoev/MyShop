@@ -51,9 +51,6 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 	
 	public default Optional<ItemTrait> setValue(ItemTrait itemTrait, String value, TraitRepository traitRepo, ItemRepository itemRepo) {
 		if (itemTrait == null) return null;
-		if (value == null) {
-			value = "";
-		}
 		Optional<Trait> traitRes = traitRepo.findById(itemTrait.getId().getTraitID());
 		if (!traitRes.isPresent()) {
 			return Optional.empty();
@@ -64,7 +61,7 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 		var trait = traitRes.get();
 		switch (trait.getType()) {
 		case StringType:
-			itemTrait.setValue(value);
+			itemTrait.setValue(value == null ? "" : value);
 			break;
 		case IntType:
 			try {
@@ -89,7 +86,7 @@ public interface ItemTraitRepository extends JpaRepository<ItemTrait, ItemTrait.
 			}
 			break;
 		case EnumType:
-			if (trait.getValues() == null || (!value.isEmpty() && !trait.getValues().contains(value))) {
+			if (trait.getValues() == null || (value != null && !value.isEmpty() && !trait.getValues().contains(value))) {
 				return Optional.empty();
 			}
 			itemTrait.setValue(value);

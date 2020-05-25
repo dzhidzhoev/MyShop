@@ -93,10 +93,10 @@ public class ItemTraitRepositoryTests extends AbstractTestNGSpringContextTests {
 
 		// enum null
 		var enumId = new ID(3, 6);
-		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), null, traitRepo, itemRepo), Optional.empty());
+		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), null, traitRepo, itemRepo).isPresent(), true);
 		// enum empty
 		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), "unknown value", traitRepo, itemRepo), Optional.empty());
-		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), "", traitRepo, itemRepo), Optional.empty());
+		assertEquals(itemTraitRepo.setValue(new ItemTrait().setId(enumId), "", traitRepo, itemRepo).isPresent(), true);
 		// enum ok
 		assertEquals(itemTraitRepo.setValue(itemTraitRepo.findById(enumId).get(), "DVD", traitRepo, itemRepo).isPresent(), true);
 		assertEquals(itemTraitRepo.findById(enumId).get().getValue(), "DVD");

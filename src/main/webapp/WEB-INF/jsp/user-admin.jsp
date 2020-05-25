@@ -27,7 +27,11 @@
 	</div>
 	<div class="row">
 		<div class="col">
-			<%@ include file=""%>
+			<c:set var="action_url" value="/update_user_info"></c:set>
+			<c:set var="edit_admin" value="true"></c:set>
+			<c:set var="action" value="Обновить данные"></c:set>
+			<c:set var="redirectPath" value="/admin/user?id=${user.id}"></c:set>
+			<%@ include file="admin/userdata.jspf" %>
 		</div>
 	</div>
 </div>
