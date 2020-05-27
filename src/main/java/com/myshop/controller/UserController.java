@@ -151,6 +151,10 @@ public class UserController {
 			fillModelData(model, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2);
 			return errorUrl;
 		}
+		var oldEmail = email;
+		if (id != null) {
+			oldEmail = userRepo.findById(id).get().getEmail();
+		}
 		var attempt = userRepo.registerUser(id, lastName, firstName, middleName, phoneNumber, address, email, password);
 		if (attempt.getFirst().isEmpty()) {
 			model.addAttribute(ERROR_MESSAGE, attempt.getSecond());
@@ -158,7 +162,7 @@ public class UserController {
 			return errorUrl;
 		}
 		
-		if (id == null) {
+		if (id == null || !email.equals(oldEmail)) {
 			var user = attempt.getFirst().get();
 			SecurityContextHolder.getContext().setAuthentication(
 					authProvider.authenticate(new UsernamePasswordAuthenticationToken(email, password)));

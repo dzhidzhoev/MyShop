@@ -23,7 +23,7 @@
 	  	<div class="text-danger">Пользователь не найден!</div>
 	  </c:if>
   </div>
-  <button type="submit" class="btn m-2 btn-primary">Войти</button>
+  <button type="submit" id="login-submit-btn" class="btn m-2 btn-primary">Войти</button>
 </form>
 <form action="register">
 	<button type="submit" class="btn m-2 btn-danger">Регистрация нового пользователя</button>

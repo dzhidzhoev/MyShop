@@ -1,13 +1,16 @@
 package com.myshop.pages;
 
 import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.openqa.selenium.WebDriver;
+import org.springframework.stereotype.Component;
 
+@Component
+@RegisterPath(paths = "/register")
 public class RegisterPage extends UserDataPage {
 	
-	private RegisterPage(WebDriver driver) {
+	public RegisterPage() {}
+	
+	public RegisterPage(WebDriver driver) {
 		super(driver);
 	}
 	
@@ -26,7 +29,6 @@ public class RegisterPage extends UserDataPage {
 		this.password.sendKeys(password == null ? "" : password);
 		this.password2.sendKeys(password2 == null ? "" : password2);
 		submit.click();
-		var url = new URL(driver.getCurrentUrl());
-		return url.getPath().equals("/register") ? new RegisterPage(driver) : new GeneralPage(driver);
+		return PagePathsDispatcher.getInstance().openPage(driver);
 	}
 }

@@ -29,6 +29,8 @@ public class UserDataPage extends GeneralPage {
 	@FindBy(css = "#error-message-text-reg")
 	protected WebElement errorMessage;
 	
+	public UserDataPage() {}
+	
 	public UserDataPage(WebDriver driver) {
 		super(driver);
 	}
