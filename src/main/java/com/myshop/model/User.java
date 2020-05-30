@@ -14,7 +14,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "UserTable")
-public class User {
+public class User implements Cloneable {
 	@Id
 	@Column(name = "UserID", nullable = false, unique = true)
 	@SequenceGenerator(name = "usertable_userid_seq", allocationSize = 1)
@@ -38,8 +38,8 @@ public class User {
 		this(null, null, null, null, false, false, null, null, null, null, null);
 	}
 	
-	public User(String email, String pwdHash, String emailToken, String pwdChangeToken, boolean isAdmin,
-			boolean isDeleted, String firstName, String lastName, String middleName, String phone, String address) {
+	public User(String email, String pwdHash, String emailToken, String pwdChangeToken, Boolean isAdmin,
+			Boolean isDeleted, String firstName, String lastName, String middleName, String phone, String address) {
 		super();
 		this.email = email;
 		this.pwdHash = pwdHash;
@@ -146,5 +146,12 @@ public class User {
 	public User setAddress(String address) {
 		this.address = address;
 		return this;
+	}
+	
+	@Override
+	public User clone() {
+		var res = new User(email, pwdHash, emailToken, pwdChangeToken, isAdmin, isDeleted, firstName, lastName, middleName, phone, address);
+		res.id = id;
+		return res;
 	}
 }

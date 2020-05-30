@@ -34,9 +34,11 @@ public class LoginPage extends GeneralPage {
 		if (password == null) {
 			password = "";
 		}
+		this.email.clear();
 		this.email.sendKeys(email);
+		this.password.clear();
 		this.password.sendKeys(password);
-		loginButton.click();
+		loginButton.submit();
 		return PagePathsDispatcher.getInstance().openPage(driver);
 	}
 }

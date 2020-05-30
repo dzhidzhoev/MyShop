@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RegisterPath(paths = {"/profile"})
-public class ProfilePage extends GeneralPage {
+public class ProfilePage extends UserDataPage {
 
 	@FindBy(css = "a[href=\"/logout\"]")
 	private WebElement logoutButton;
@@ -23,5 +23,10 @@ public class ProfilePage extends GeneralPage {
 	public GeneralPage logOut() throws MalformedURLException {
 		logoutButton.click();
 		return PagePathsDispatcher.getInstance().openPage(driver);
+	}
+
+	public static UserDataPage to(WebDriver driver) {
+		driver.get("http://localhost:8080/profile");
+		return new ProfilePage(driver);
 	}
 }

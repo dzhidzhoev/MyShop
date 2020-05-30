@@ -2,9 +2,9 @@ package com.myshop.controller;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.myshop.ShopAuthProvider;
 import com.myshop.ShopUserPrincipal;
@@ -93,7 +94,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/update_user_info")
-	public String doUpdate(Model model, HttpServletRequest request,
+	public ModelAndView doUpdate(Model model, HttpServletRequest request,
 			@RequestParam(name = "userId") Integer id,
 			@RequestParam(name = "lastName") String lastName, 
 			@RequestParam(name = "firstName") String firstName, 
@@ -103,21 +104,20 @@ public class UserController {
 			@RequestParam(name = "email") String email, 
 			@RequestParam(name = "password") Optional<String> password,
 			@RequestParam(name = "password2") Optional<String> password2,
+			@RequestParam Optional<String> administration,
 			@RequestParam Optional<String> redirectPath) throws UnsupportedEncodingException {
 		var userId = getLoggedUserId();
 		if (userId == null) {
-			return "redirect:/login";
+			return new ModelAndView("redirect:/login", model.asMap());
 		}
 		var user = userRepo.findById(userId).get();
-//		if (!password.orElse("").isEmpty() && id != null && user.getId() != id) {
-//			throw new SecurityException("access denied");
-//		} TODO
-		if (user.isAdmin() || Integer.valueOf(user.getId()).equals(id)) {
+		if ((user.isAdmin() && administration.isPresent()) || Integer.valueOf(user.getId()).equals(id)) {
 			boolean sendEmail = !email.trim().equals(user.getEmail());
-			return registerOrUpdate(model, request, "redirect:/profile", sendEmail, id, lastName, firstName, middleName, phoneNumber, address, email, password.orElse(""),
+			var view = registerOrUpdate(model, request, "redirect:/profile", sendEmail, id, lastName, firstName, middleName, phoneNumber, address, email, password.orElse(""),
 					password2.orElse(""), redirectPath.orElse("/profile"));
+			return new ModelAndView(view, model.asMap());
 		} else {
-			return "redirect:/login";
+			return new ModelAndView("redirect:/profile", Collections.singletonMap(ERROR_MESSAGE, "access denies"));
 		}
 	}
 	
@@ -154,6 +154,11 @@ public class UserController {
 		var oldEmail = email;
 		if (id != null) {
 			oldEmail = userRepo.findById(id).get().getEmail();
+			if (!email.equals(oldEmail) && userRepo.logIn(oldEmail, password).isEmpty()) {
+				model.addAttribute(ERROR_MESSAGE, URLEncoder.encode("Укажите действующий пароль для изменения почты!", "UTF-8"));
+				fillModelData(model, id, lastName, firstName, middleName, phoneNumber, address, email, password, password2);
+				return errorUrl;
+			}
 		}
 		var attempt = userRepo.registerUser(id, lastName, firstName, middleName, phoneNumber, address, email, password);
 		if (attempt.getFirst().isEmpty()) {
