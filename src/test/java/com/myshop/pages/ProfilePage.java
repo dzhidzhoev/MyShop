@@ -2,6 +2,7 @@ package com.myshop.pages;
 
 import java.net.MalformedURLException;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -28,5 +29,15 @@ public class ProfilePage extends UserDataPage {
 	public static UserDataPage to(WebDriver driver) {
 		driver.get("http://localhost:8080/profile");
 		return new ProfilePage(driver);
+	}
+	
+	public GeneralPage addItem(int categoryId) throws MalformedURLException {
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript(
+				"$('#add-item-dialog-button').click();"
+				+ "$('select[name=categoryId]').val(arguments[0]);"
+				+ "$('#add-item-button').click();", categoryId);
+
+		return PagePathsDispatcher.getInstance().openPage(driver);
 	}
 }

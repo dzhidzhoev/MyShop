@@ -91,9 +91,7 @@ return base64
 	<form:hidden path="id"/>
 	<div class="row">
 	<div class="col-sm">
-	<c:if test="${param.errorMessage != null}">
-		<div class="text-danger"><c:out value="${param.errorMessage }"></c:out> </div><br>
-	</c:if>
+	<div id="error-message-text-item" class="text-danger"><c:if test="${param.errorMessage != null}"><c:out value="${param.errorMessage }"></c:out></c:if></div><br>
 	<img class="img-fluid" id="item-image-view" src="data:image/png;base64,${imageString }" />
 	<input type="hidden" id="item-image" name="itemImage" value="${imageString }" />
 	<div class="custom-file">
@@ -139,13 +137,13 @@ return base64
 		<form:textarea id="desc-area" path="description" placeholder="Описание"/>
 	</div>
 	<div class="form-group">
-		<form:button class="btn btn-success">Обновить</form:button>
+		<form:button class="btn btn-success" id="update-item-button">Обновить</form:button>
 	</div>
 	<div class="form-group">
 		<button type="button" class="btn btn-primary" onclick="editTraits()">Редактировать свойства</button>
 	</div>
 	<div class="form-group">
-		<a href="/item?id=${item.id }">Просмотр</a>
+		<a id="view-item-link" href="/item?id=${item.id }">Просмотр</a>
 	</div>
 	</div>
 	</div>

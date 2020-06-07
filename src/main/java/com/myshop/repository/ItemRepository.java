@@ -7,7 +7,6 @@ import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Repository;
 
@@ -43,17 +42,14 @@ public interface ItemRepository extends JpaRepository<Item, Integer>, ItemReposi
 			return Pair.of(Optional.empty(), "no name");
 		}
 		name = name.trim();
-		var item = new Item()
-				.setCategory(category)
-				.setName(name)
-				.setPrice(price)
-				.setCount(count)
-				.setActive(active)
-				.setDescription(description)
-				.setImage(image);
-		if (id != null) {
-			item.setId(id);
-		}
+		var item = id != null ? findById(id).get() : new Item();
+		item.setCategory(category)
+			.setName(name)
+			.setPrice(price)
+			.setCount(count)
+			.setActive(active)
+			.setDescription(description)
+			.setImage(image);
 		item = saveAndFlush(item);
 		return Pair.of(Optional.of(item), "ok");
 	}

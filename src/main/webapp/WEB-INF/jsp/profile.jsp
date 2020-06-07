@@ -33,7 +33,7 @@
 <a href="<%=TraitController.ADMIN_TRAITS_PATH%>">Свойства товаров</a>
 </div>
 <div class="col m-2 text-center">
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+<button type="button" id="add-item-dialog-button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
   Добавить товар
 </button>
 </div>
@@ -95,7 +95,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-        <button type="submit" class="btn btn-success">Создать</button>
+        <button type="submit" class="btn btn-success" id="add-item-button">Создать</button>
       </div>
     </form>
     </div>
