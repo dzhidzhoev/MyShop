@@ -1,8 +1,8 @@
 package com.myshop.pages;
 
 import java.net.MalformedURLException;
+import java.util.Optional;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -31,14 +31,10 @@ public class EditItemPage extends GeneralPage {
 	private WebElement updateButton;
 	@FindBy(css = "#view-item-link")
 	private WebElement viewItemButton;
+	@FindBy(css = "#customFile")
+	private WebElement itemImageChooser;
 	@FindBy(css = "#error-message-text-item")
 	private WebElement errorMessage;
-	
-	public EditItemPage() {}
-	
-	public EditItemPage(WebDriver driver) {
-		super(driver);
-	}
 	
 	public int getId() {
 		return Integer.valueOf(id.getAttribute("value"));
@@ -48,12 +44,12 @@ public class EditItemPage extends GeneralPage {
 		return errorMessage.getText();
 	}
 	
-	public GeneralPage viewItem() throws MalformedURLException {
+	public GeneralPage viewItem(PagePathsDispatcher ppd) throws MalformedURLException {
 		viewItemButton.click();
-		return PagePathsDispatcher.getInstance().openPage(driver);
+		return ppd.openPage();
 	}
 	
-	public GeneralPage updateItem(String name, int categoryId, int count, int price, boolean active, String desc) throws MalformedURLException {
+	public GeneralPage updateItem(String name, int categoryId, int count, int price, boolean active, String desc, Optional<String> imagePath) throws MalformedURLException {
 		this.name.clear();
 		this.name.sendKeys(name);
 		Select selector = new Select(categorySelect);
@@ -67,7 +63,8 @@ public class EditItemPage extends GeneralPage {
 		}
 		this.description.clear();
 		this.description.sendKeys(desc);
+		imagePath.ifPresent(img -> itemImageChooser.sendKeys(img));
 		updateButton.click();
-		return PagePathsDispatcher.getInstance().openPage(driver);
+		return ppd.openPage();
 	}
 }

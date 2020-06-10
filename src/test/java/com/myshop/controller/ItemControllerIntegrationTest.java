@@ -3,11 +3,17 @@ package com.myshop.controller;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Optional;
+import java.util.function.Consumer;
 
+import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.BeforeSuite;
@@ -16,6 +22,7 @@ import org.testng.annotations.Test;
 import com.myshop.MyShopApplication;
 import com.myshop.pages.EditItemPage;
 import com.myshop.pages.LoginPage;
+import com.myshop.pages.PagePathsDispatcher;
 import com.myshop.pages.ProfilePage;
 import com.myshop.repository.ItemRepository;
 
@@ -25,15 +32,20 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 	HtmlUnitDriver driver;
 	@Autowired ItemRepository itemRepo;
 	ProfilePage adminProfile;
+	private PagePathsDispatcher ppd;
+	
+	@Value("classpath:testimg.png")
+	private Resource testImg;
 	
 	@BeforeSuite
 	public void init() {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
+		ppd = new PagePathsDispatcher(driver, driver);
 	}
 	
 	private void loginAdmin() throws MalformedURLException {
-		adminProfile = (ProfilePage) LoginPage.to(driver).logIn("1@1.com", "1");
+		adminProfile = (ProfilePage) LoginPage.to(ppd).logIn("1@1.com", "1");
 	}
 	
 	private void logoutAdmin() {
@@ -41,7 +53,7 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 	}
 	
 	@Test
-	public void addUpdateItemTest() throws MalformedURLException {
+	public void addUpdateItemTest() throws IOException {
 		loginAdmin();
 		
 		assertEquals(itemRepo.findAll().size(), 4);
@@ -49,22 +61,28 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 		EditItemPage editPage;
 		
 		// name empty
-		adminProfile = (ProfilePage) ProfilePage.to(driver);
+		adminProfile = (ProfilePage) ProfilePage.to(ppd);
 		editPage = (EditItemPage) adminProfile.addItem(1);
-		checkUpdateItem(editPage, "", 1, 100, 0, true, "Hello", false);
-		adminProfile = (ProfilePage) ProfilePage.to(driver);
+		checkUpdateItem(editPage, "", 1, null, 100, 0, true, "Hello", false, true, null);
+		adminProfile = (ProfilePage) ProfilePage.to(ppd);
 		editPage = (EditItemPage) adminProfile.addItem(2);
-		checkUpdateItem(editPage, "   \t", 1, 100, 0, true, "Hello", false);
+		checkUpdateItem(editPage, "   \t", 1, null, 100, 0, true, "Hello", false, true, null);
 		//ok
-		adminProfile = (ProfilePage) ProfilePage.to(driver);
+		adminProfile = (ProfilePage) ProfilePage.to(ppd);
 		editPage = (EditItemPage) adminProfile.addItem(1);
-		checkUpdateItem(editPage, "new item", 1, 100, 0, false, "description", true);
+		checkUpdateItem(editPage, "new item", 1, null, 100, 0, false, "description", true, false, null);
+		// change image
+		byte[] testImgContent = FileUtils.readFileToByteArray(testImg.getFile());
+		Consumer<byte[]> imageChecker = img -> assertEquals(img, testImgContent);
+		checkUpdateItem(editPage, "new item", 1, getClass().getClassLoader().getResource("testimg.png").getPath(), 100, 0, false, "description", true, false, imageChecker);
+		// not changing image
+		checkUpdateItem(editPage, "new item", 1, null, 100, 0, false, "description", true, true, imageChecker);
 		
 		logoutAdmin();
 	}
 	
-	private void checkUpdateItem(EditItemPage editPage, String name, int categoryId, int count, int price, boolean active, String desc, boolean good) throws MalformedURLException {
-		var res = editPage.updateItem(name, categoryId, count, price, active, desc);
+	private void checkUpdateItem(EditItemPage editPage, String name, int categoryId, String imagePath, int count, int price, boolean active, String desc, boolean good, boolean delete, Consumer<byte[]> imageChecker) throws MalformedURLException {
+		var res = editPage.updateItem(name, categoryId, count, price, active, desc, Optional.ofNullable(imagePath));
 		assertTrue(res instanceof EditItemPage || !good);
 		if (res instanceof EditItemPage) {
 			editPage = (EditItemPage) res;
@@ -77,10 +95,15 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 				assertEquals(item.getCount(), count);
 				assertEquals(item.isActive(), active);
 				assertEquals(item.getDescription(), desc);
+				if (imageChecker != null) {
+					imageChecker.accept(itemRepo.getImageById(item.getId()));
+				}
 			}
-			itemRepo.delete(item);
-			itemRepo.flush();
-			assertEquals(itemRepo.findById(editPage.getId()).isPresent(), false);
+			if (delete) {
+				itemRepo.delete(item);
+				itemRepo.flush();
+				assertEquals(itemRepo.findById(editPage.getId()).isPresent(), false);
+			}
 		}
 	}
 }

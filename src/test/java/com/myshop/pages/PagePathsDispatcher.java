@@ -10,29 +10,29 @@ import java.net.URL;
 import java.util.HashMap;
 
 import org.openqa.selenium.InvalidArgumentException;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.cglib.beans.BeanGenerator;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-class PagePathsDispatcher {
+public class PagePathsDispatcher {
 	
+	private HtmlUnitDriver driver;
+	private JavascriptExecutor js;
+	
+	@SuppressWarnings("serial")
 	static class InvalidPageClassException extends RuntimeException {
 	}
 	
-	private static PagePathsDispatcher singleton = null;
-	
 	private HashMap<String, Class<? extends GeneralPage>> holder = new HashMap<>(); 
 	
-	public static PagePathsDispatcher getInstance() {
-		if (singleton == null) {
-			singleton = new PagePathsDispatcher();
-		}
-		return singleton;
-	}
-	
-	private PagePathsDispatcher() {
+	public PagePathsDispatcher(HtmlUnitDriver driver, JavascriptExecutor js) {
+		this.driver = driver;
+		this.js = js;
+		
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
 		scanner.addIncludeFilter(new AnnotationTypeFilter(RegisterPath.class));
 		for (BeanDefinition bd: scanner.findCandidateComponents(getClass().getPackageName())) {
@@ -63,16 +63,30 @@ class PagePathsDispatcher {
 		holder.remove(path);
 	}
 	
-	public GeneralPage openPage(WebDriver driver) throws MalformedURLException {
+	public GeneralPage openPage() throws MalformedURLException {
 		var url = new URL(driver.getCurrentUrl());
 		var path = url.getPath();
 		try {
-			return holder.containsKey(path) ? holder.get(path).getConstructor(WebDriver.class).newInstance(driver) : new GeneralPage(driver);
+			GeneralPage page = holder.containsKey(path) ? holder.get(path).getConstructor().newInstance() : new GeneralPage();
+			page.setDispatcher(this);
+			return page;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			throw new InvalidPageClassException();
 		}
+	}
+
+	public void setJavascriptEnabled(boolean isEnabled) {
+		driver.setJavascriptEnabled(isEnabled);
+	}
+	
+	public WebDriver getDriver() {
+		return driver;
+	}
+
+	public JavascriptExecutor getJavascriptExecutor() {
+		return js;
 	}
 }
 

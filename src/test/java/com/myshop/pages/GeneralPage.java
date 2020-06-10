@@ -1,16 +1,13 @@
 package com.myshop.pages;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
 
 public class GeneralPage {
 	
-	protected WebDriver driver = null;
+	protected PagePathsDispatcher ppd = null;
 
-	public GeneralPage() {}
-	
-	public GeneralPage(WebDriver driver) {
-		this.driver = driver;
-		PageFactory.initElements(driver, this);
+	public void setDispatcher(PagePathsDispatcher ppd) {
+		this.ppd = ppd;
+		PageFactory.initElements(ppd.getDriver(), this);
 	}
 }

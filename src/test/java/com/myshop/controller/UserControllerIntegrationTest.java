@@ -29,6 +29,7 @@ import com.myshop.UserRepositoryTests.Suite;
 import com.myshop.model.User;
 import com.myshop.pages.GeneralPage;
 import com.myshop.pages.LoginPage;
+import com.myshop.pages.PagePathsDispatcher;
 import com.myshop.pages.ProfilePage;
 import com.myshop.pages.RegisterPage;
 import com.myshop.pages.UserDataPage;
@@ -39,6 +40,7 @@ import com.myshop.repository.UserRepository;
 public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTests {
 	
 	HtmlUnitDriver driver;
+	PagePathsDispatcher ppd;
 	
 	@Autowired
 	private UserRepository userRepo;
@@ -122,60 +124,61 @@ public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTe
 	public void init() {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
+		ppd = new PagePathsDispatcher(driver, driver);
 	}
 	
 	@Test(dataProvider = "registerUI")
 	public void testRegister(String lastName, String firstName, String middleName, 
 			String phoneNumber, String address,
 			String lastNameRes, String firstNameRes, String middleNameRes, 
-			String phoneNumberRes, String addressRes, boolean good) {
+			String phoneNumberRes, String addressRes, boolean good) throws MalformedURLException {
 		final String INITIAL_PWD_HASH = userRepo.getPasswordHash(INITIAL_PWD);
 		
 		// all ok
-		registerOrUpdateUserTestEmailOnRegister(RegisterPage.to(driver), true, null, null, lastName, firstName, middleName, phoneNumber, address, INITIAL_EMAIL, INITIAL_PWD, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, INITIAL_EMAIL, INITIAL_PWD_HASH, good);
+		registerOrUpdateUserTestEmailOnRegister(RegisterPage.to(ppd), true, null, null, lastName, firstName, middleName, phoneNumber, address, INITIAL_EMAIL, INITIAL_PWD, lastNameRes, firstNameRes, middleNameRes, phoneNumberRes, addressRes, INITIAL_EMAIL, INITIAL_PWD_HASH, good);
 	}
 	
 	@Test
-	public void testRegisterEmail() {
+	public void testRegisterEmail() throws MalformedURLException {
 		final String INITIAL_PWD_HASH = userRepo.getPasswordHash(INITIAL_PWD);
 		UserDataPage regPage;
 		// all ok
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailOnRegister(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, true);
 		// spaces
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailOnRegister(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "  " + INITIAL_EMAIL + "\t", INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, true);
 		// invalid
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailOnRegister(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "100100.com", INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, false);
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailOnRegister(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "", INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, false);
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailOnRegister(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, false);
 		// already used
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailOnRegister(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "1@1.com", INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, false);
 	}
 	
 	@Test
-	public void testRegisterPassword() {
+	public void testRegisterPassword() throws MalformedURLException {
 		final String INITIAL_PWD_HASH = userRepo.getPasswordHash(INITIAL_PWD);
 		UserDataPage regPage;
 		// empty first & second
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, "", INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, RegisterPage.class, false);
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD, "", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, RegisterPage.class, false);
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, "", "", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, userRepo.getPasswordHash(""), RegisterPage.class, false);
 		// invalid
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, "small", "small", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, userRepo.getPasswordHash("small"), RegisterPage.class, false);
 		// not equal
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD, INITIAL_PWD + " ", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, RegisterPage.class, false);
 		// good
-		regPage = RegisterPage.to(driver);
+		regPage = RegisterPage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(regPage, true, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, RegisterPage.class, true);
 	}
 	
@@ -186,7 +189,7 @@ public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTe
 		assertTrue(userRepo.findById(UPDATE_USER_ID).isPresent());
 		
 		driver.manage().deleteAllCookies();
-		var pp = (ProfilePage) LoginPage.to(driver).logIn(email, INITIAL_PWD);
+		var pp = (ProfilePage) LoginPage.to(ppd).logIn(email, INITIAL_PWD);
 		return Pair.of(pp, UPDATE_USER_ID);
 	}
 	
@@ -266,26 +269,26 @@ public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTe
 		final String INITIAL_PWD_HASH = userRepo.getPasswordHash(INITIAL_PWD);
 		UserDataPage profilePage;
 		// spaces
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "  " + INITIAL_EMAIL + "\t", INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, true);
 		// invalid
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "100100.com", INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, ProfilePage.class, false);
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "", INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, ProfilePage.class, false);
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, ProfilePage.class, false);
 		// already used
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, "1@1.com", INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, null, INITIAL_PWD_HASH, ProfilePage.class, false);
 		// pwd not equal
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, NEW_EMAIL, INITIAL_PWD, "11", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, NEW_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, false);
 		// empty pwd
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, NEW_EMAIL, null, null, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, NEW_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, false);
 		// all ok
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, NEW_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL + "smth2", INITIAL_PWD, INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL + "smth2", INITIAL_PWD_HASH, ProfilePage.class, true);
 	
 		afterUpdate(userId);
@@ -299,24 +302,24 @@ public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTe
 		final String INITIAL_PWD_HASH = userRepo.getPasswordHash(INITIAL_PWD);
 		UserDataPage profilePage;
 		// empty first | second
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, "", INITIAL_PWD, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, false);
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD, "", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, false);
 		// invalid
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, "small", "small", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, userRepo.getPasswordHash("small"), ProfilePage.class, false);
 		// not equal
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD, INITIAL_PWD + "_", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, false);
 		// both email & password
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME + "_", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL + "smth", "newgoodpwd1234", "newgoodpwd1234", INITIAL_NAME + "_", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL + "smth", INITIAL_PWD_HASH, ProfilePage.class, false);
 		// empty first & second
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME + "_", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, "", "", INITIAL_NAME + "_", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD_HASH, ProfilePage.class, true);
 		// good
-		profilePage = ProfilePage.to(driver);
+		profilePage = ProfilePage.to(ppd);
 		registerOrUpdateUserTestEmailPwd(profilePage, false, userId, INITIAL_EMAIL, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, INITIAL_PWD + "smth", INITIAL_PWD + "smth", INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_NAME, INITIAL_EMAIL, userRepo.getPasswordHash(INITIAL_PWD + "smth"), ProfilePage.class, true);
 		
 		afterUpdate(userId);

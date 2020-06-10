@@ -3,10 +3,7 @@ package com.myshop.pages;
 import java.net.MalformedURLException;
 
 import org.openqa.selenium.JavascriptException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.FindBy;
 
 public class UserDataPage extends GeneralPage {
@@ -35,12 +32,6 @@ public class UserDataPage extends GeneralPage {
 	protected WebElement submit;
 	@FindBy(css = "#error-message-text-reg")
 	protected WebElement errorMessage;
-	
-	public UserDataPage() {}
-	
-	public UserDataPage(WebDriver driver) {
-		super(driver);
-	}
 
 	public String getErrorMessage() {
 		return errorMessage.getText();
@@ -48,7 +39,7 @@ public class UserDataPage extends GeneralPage {
 	
 	public GeneralPage doUpdate(Integer id, String lastName, String firstName, String middleName, String phoneNumber, String address, String email,
 			String password, String password2) throws MalformedURLException {
-		((JavascriptExecutor) driver).executeScript("arguments[0].value = " + id + ";", userId);
+		ppd.getJavascriptExecutor().executeScript("arguments[0].value = " + id + ";", userId);
 		if (!userId.getAttribute("value").equals(id.toString())) {
 			throw new JavascriptException("failed to set userId value");
 		}
@@ -77,13 +68,9 @@ public class UserDataPage extends GeneralPage {
 		this.password.sendKeys(password == null ? "" : password);
 		this.password2.clear();
 		this.password2.sendKeys(password2 == null ? "" : password2);
-		if (driver instanceof HtmlUnitDriver) {
-			((HtmlUnitDriver) driver).setJavascriptEnabled(false);
-		}
+		ppd.setJavascriptEnabled(false);
 		submit.submit();
-		if (driver instanceof HtmlUnitDriver) {
-			((HtmlUnitDriver) driver).setJavascriptEnabled(true);
-		}
-		return PagePathsDispatcher.getInstance().openPage(driver);
+		ppd.setJavascriptEnabled(true);
+		return ppd.openPage();
 	}
 }

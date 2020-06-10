@@ -2,28 +2,20 @@ package com.myshop;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.springframework.transaction.annotation.Transactional;
 import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 
 import com.myshop.model.Cart;
 import com.myshop.model.Cart.ID;
-import com.myshop.model.CategoryTrait;
-import com.myshop.model.Order;
 import com.myshop.model.OrderStatus;
-import com.myshop.model.Trait;
-import com.myshop.model.TypeEnum;
 import com.myshop.repository.CartRepository;
 import com.myshop.repository.CategoryRepository;
 import com.myshop.repository.CategoryTraitRepository;

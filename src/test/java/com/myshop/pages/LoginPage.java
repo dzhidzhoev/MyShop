@@ -1,7 +1,7 @@
 package com.myshop.pages;
 
 import java.net.MalformedURLException;
-import org.openqa.selenium.WebDriver;
+
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.springframework.stereotype.Component;
@@ -15,16 +15,10 @@ public class LoginPage extends GeneralPage {
 	protected WebElement password;
 	@FindBy(css = "#login-submit-btn")
 	protected WebElement loginButton;
-	
-	public LoginPage() {}
-	
-	public LoginPage(WebDriver driver) {
-		super(driver);
-	}
 
-	public static LoginPage to(WebDriver driver) {
-		driver.get("http://localhost:8080/login");
-		return new LoginPage(driver);
+	public static LoginPage to(PagePathsDispatcher ppd) throws MalformedURLException {
+		ppd.getDriver().get("http://localhost:8080/login");
+		return (LoginPage) ppd.openPage();
 	}
 	
 	public GeneralPage logIn(String email, String password) throws MalformedURLException {
@@ -39,6 +33,6 @@ public class LoginPage extends GeneralPage {
 		this.password.clear();
 		this.password.sendKeys(password);
 		loginButton.submit();
-		return PagePathsDispatcher.getInstance().openPage(driver);
+		return ppd.openPage();
 	}
 }

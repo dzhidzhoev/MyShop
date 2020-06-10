@@ -10,7 +10,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
-import com.myshop.model.Cart;
 import com.myshop.model.Cart.ID;
 import com.myshop.repository.CartRepository;
 import com.myshop.repository.CategoryRepository;

@@ -130,7 +130,7 @@ public class ItemController {
 				item.getCount(),
 				item.isActive(),
 				item.getDescription(),
-				itemImage.map(s -> Base64.getDecoder().decode(s)).orElse(null));
+				itemImage.map(s -> Base64.getDecoder().decode(s)).orElse(itemRepo.findById(item.getId()).get().getImage()));
 		if (!attemp.getFirst().isPresent()) {
 			return "redirect:/admin/item?id=" + item.getId() + "&errorMessage=" + URLEncoder.encode(attemp.getSecond(), "UTF-8");
 		}
