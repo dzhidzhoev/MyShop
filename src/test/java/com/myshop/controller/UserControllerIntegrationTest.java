@@ -10,16 +10,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.assertj.core.util.IterableUtil;
 import org.assertj.core.util.Lists;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.data.util.Pair;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -35,12 +37,14 @@ import com.myshop.pages.RegisterPage;
 import com.myshop.pages.UserDataPage;
 import com.myshop.repository.UserRepository;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = MyShopApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = MyShopApplication.class)
 @TestPropertySource(value = "classpath:test.properties", properties = {"debug.dont_send_verification_email = true"})
 public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTests {
 	
 	HtmlUnitDriver driver;
 	PagePathsDispatcher ppd;
+	@LocalServerPort
+	int port;
 	
 	@Autowired
 	private UserRepository userRepo;
@@ -120,11 +124,11 @@ public class UserControllerIntegrationTest extends AbstractTestNGSpringContextTe
 		return res;
 	}
 	
-	@BeforeSuite
+	@PostConstruct
 	public void init() {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		ppd = new PagePathsDispatcher(driver, driver);
+		ppd = new PagePathsDispatcher(driver, driver, port);
 	}
 	
 	@Test(dataProvider = "registerUI")

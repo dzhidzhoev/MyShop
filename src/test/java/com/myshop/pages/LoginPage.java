@@ -17,7 +17,7 @@ public class LoginPage extends GeneralPage {
 	protected WebElement loginButton;
 
 	public static LoginPage to(PagePathsDispatcher ppd) throws MalformedURLException {
-		ppd.getDriver().get("http://localhost:8080/login");
+		ppd.getDriver().get("http://localhost:" + ppd.getServerPort() + "/login");
 		return (LoginPage) ppd.openPage();
 	}
 	

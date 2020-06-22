@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class RegisterPage extends UserDataPage {
 	
 	public static UserDataPage to(PagePathsDispatcher ppd) throws MalformedURLException {
-		ppd.getDriver().get("http://localhost:8080/register");
+		ppd.getDriver().get("http://localhost:" + ppd.getServerPort() + "/register");
 		return (UserDataPage) ppd.openPage();
 	}
 }

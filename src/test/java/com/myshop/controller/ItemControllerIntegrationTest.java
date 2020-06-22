@@ -8,15 +8,17 @@ import java.net.MalformedURLException;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.io.Resource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.myshop.MyShopApplication;
@@ -26,22 +28,24 @@ import com.myshop.pages.PagePathsDispatcher;
 import com.myshop.pages.ProfilePage;
 import com.myshop.repository.ItemRepository;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = MyShopApplication.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = MyShopApplication.class)
 @TestPropertySource(value = "classpath:test.properties")
 public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTests {
 	HtmlUnitDriver driver;
 	@Autowired ItemRepository itemRepo;
 	ProfilePage adminProfile;
 	private PagePathsDispatcher ppd;
+	@LocalServerPort
+	private int port;
 	
 	@Value("classpath:testimg.png")
 	private Resource testImg;
 	
-	@BeforeSuite
+	@PostConstruct
 	public void init() {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
-		ppd = new PagePathsDispatcher(driver, driver);
+		ppd = new PagePathsDispatcher(driver, driver, port);
 	}
 	
 	private void loginAdmin() throws MalformedURLException {
@@ -74,7 +78,7 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 		// change image
 		byte[] testImgContent = FileUtils.readFileToByteArray(testImg.getFile());
 		Consumer<byte[]> imageChecker = img -> assertEquals(img, testImgContent);
-		checkUpdateItem(editPage, "new item", 1, getClass().getClassLoader().getResource("testimg.png").getPath(), 100, 0, false, "description", true, false, imageChecker);
+		checkUpdateItem(editPage, "new item", 1, testImg.getFile().getPath(), 100, 0, false, "description", true, false, imageChecker);
 		// not changing image
 		checkUpdateItem(editPage, "new item", 1, null, 100, 0, false, "description", true, true, imageChecker);
 		

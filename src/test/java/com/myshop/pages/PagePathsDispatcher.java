@@ -22,6 +22,7 @@ public class PagePathsDispatcher {
 	
 	private HtmlUnitDriver driver;
 	private JavascriptExecutor js;
+	private int serverPort;
 	
 	@SuppressWarnings("serial")
 	static class InvalidPageClassException extends RuntimeException {
@@ -29,9 +30,10 @@ public class PagePathsDispatcher {
 	
 	private HashMap<String, Class<? extends GeneralPage>> holder = new HashMap<>(); 
 	
-	public PagePathsDispatcher(HtmlUnitDriver driver, JavascriptExecutor js) {
+	public PagePathsDispatcher(HtmlUnitDriver driver, JavascriptExecutor js, int port) {
 		this.driver = driver;
 		this.js = js;
+		this.serverPort = port;
 		
 		ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
 		scanner.addIncludeFilter(new AnnotationTypeFilter(RegisterPath.class));
@@ -87,6 +89,10 @@ public class PagePathsDispatcher {
 
 	public JavascriptExecutor getJavascriptExecutor() {
 		return js;
+	}
+
+	public int getServerPort() {
+		return serverPort;
 	}
 }
 

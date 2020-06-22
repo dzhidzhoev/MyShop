@@ -19,7 +19,7 @@ public class ProfilePage extends UserDataPage {
 	}
 
 	public static ProfilePage to(PagePathsDispatcher ppd) throws MalformedURLException {
-		ppd.getDriver().get("http://localhost:8080/profile");
+		ppd.getDriver().get("http://localhost:" + ppd.getServerPort() + "/profile");
 		return (ProfilePage) ppd.openPage();
 	}
 	
