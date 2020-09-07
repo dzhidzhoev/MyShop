@@ -50,7 +50,7 @@
     	<c:forEach items="${orders}" var="o">
     		<% Order o = (Order) pageContext.getAttribute("o"); %>
     		<div class="row m-1 p-2 bg-light">
-            <div class="col-sm-6"><a href="order-details.php">Заказ #${o.getId()}</a></div>
+            <div class="col-sm-6"><a href="/user/order?id=${o.getId() }">Заказ #${o.getId()}</a></div>
             <div class="col-sm-3">
             	<%=dtf.format(o.getOrderTime().toInstant()) %>
             </div>

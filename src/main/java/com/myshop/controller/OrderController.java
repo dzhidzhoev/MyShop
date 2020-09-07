@@ -10,8 +10,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.myshop.model.Order;
+import com.myshop.model.OrderStatus;
+import com.myshop.repository.OrderItemRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.UserRepository;
 
@@ -20,8 +24,11 @@ public class OrderController {
 	public static final String ADMIN_ORDERS_PATH = "/admin/orders";
 	public static final int PAGE_SIZE = 25;
 	
+	@Autowired CommonController common;
 	@Autowired OrderRepository orderRepo;
 	@Autowired UserRepository userRepo;
+	@Autowired OrderItemRepository orderItemRepo;
+	@Autowired UserController userController;
 	
 	@GetMapping(ADMIN_ORDERS_PATH)
 	public String showOrdersManagement(Model model, Optional<Integer> page, Optional<String> email) {
@@ -37,5 +44,34 @@ public class OrderController {
 		model.addAttribute("page", pageNum + 1);
 		model.addAttribute("orders", orders);
 		return "orders";
+	}
+	
+	private boolean hasOrderAccess(Order order) {
+		return common.isUserAdmin() || userController.getLoggedUserId() == order.getUser().getId(); 
+	}
+	
+	@GetMapping("/user/order")
+	public String showOrder(Model model, @RequestParam int id) {
+		var orderAttempt = orderRepo.findById(id);
+		if (orderAttempt.isEmpty() || !hasOrderAccess(orderAttempt.get())) {
+			return "redirect:/profile";
+		}
+		Order order = orderAttempt.get();
+		model.addAttribute("order", order);
+		model.addAttribute("items", orderItemRepo.findByOrderId(order.getId()));
+		return "order";
+	}
+	
+	@PostMapping("/user/cancel")
+	public String cancelOrder(@RequestParam int id) {
+		var orderAttempt = orderRepo.findById(id);
+		if (!orderAttempt.isEmpty() 
+				&& hasOrderAccess(orderAttempt.get())
+				&& orderAttempt.get().getStatus() != OrderStatus.Done) {
+			var order = orderAttempt.get()
+					.setStatus(OrderStatus.Canceled);
+			orderRepo.saveAndFlush(order);
+		}
+		return "redirect:/user/order?id=" + id;
 	}
 }
