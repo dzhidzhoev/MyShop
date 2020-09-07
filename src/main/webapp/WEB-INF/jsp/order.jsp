@@ -51,7 +51,7 @@
 	<%=CommonController.getOrderStatusHTML(((Order) pageContext.getAttribute("order")).getStatus()) %>
 	</c:if>
 	</h4><br>
-<form method="/user/update_order">
+<form method="post" action="/user/update_order">
 	<input type="hiddent" name="id" value="${order.id }" />
 		<div class="form-group">
 			<label for="exampleInputEmail1">Дата заказа</label>
