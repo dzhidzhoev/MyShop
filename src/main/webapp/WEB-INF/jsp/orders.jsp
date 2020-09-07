@@ -54,7 +54,7 @@
   <tbody>
 	<c:forEach var="order" items="${orders }">
     <tr>
-      <th scope="row"><a href="order-details.php?edit=1"><!-- TODO -->${order.id }</a></th>
+      <th scope="row"><a href="/user/order?id=${order.id }">${order.id }</a></th>
       <td><a href="user?id=${order.user.id }"><c:out value="${order.user.email }"></c:out> </a></td>
       <td><c:out value="${order.orderTime }"></c:out></td>
       <td><c:out value="${order.user.firstName }"></c:out> <c:out value="${order.user.middleName }"></c:out> <c:out value="${order.user.lastName}"></c:out> </td>
@@ -62,15 +62,7 @@
       <td>
       	<div class="dropdown">
             <%=CommonController.getOrderStatusHTML(((Order) pageContext.getAttribute("order")).getStatus()) %>
-          <!-- <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          	
-          		for (OrderStatus status: OrderStatus.values()) {
-          			out.print("<a class=\"dropdown-item\" href=\"#\">");
-          			out.print(CommonController.getOrderStatusHTML(status));
-          			out.print("</a>");
-          		}
-          	
-          </div> -->
+          
         </div>
       </td>
     </tr>

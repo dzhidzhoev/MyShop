@@ -37,7 +37,7 @@
 	<c:forEach items="${users}" var="user">
 	    <tr>
 	      <th scope="row">${user.id}</th>
-	      <td>${user.isDeleted() ? '<strike>' : '<a href="/admin/user?id='.concat(user.id).concat('">')}${user.email}${user.isDeleted() ? '</strike>' : '</a>'}</td> <!-- TODO -->
+	      <td>${user.isDeleted() ? '<strike>' : '<a href="/admin/user?id='.concat(user.id).concat('">')}${user.email}${user.isDeleted() ? '</strike>' : '</a>'}</td>
 	      <td><input type="checkbox" disabled="disabled" ${user.isAdmin() ? 'checked="checked"' : ''}/></td>
 	      <td>
 	      	<c:if test="${user.deleted }">

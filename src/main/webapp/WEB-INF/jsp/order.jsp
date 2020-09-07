@@ -23,7 +23,34 @@
 <br>
 <div class="container my-1">
 <h2>Заказ #${order.id }</h2>
-	<h4>Статус: <%=CommonController.getOrderStatusHTML(((Order) pageContext.getAttribute("order")).getStatus()) %></h4><br>
+	<h4>Статус: 
+	<c:if test="${isUserAdmin }">
+		<div class="dropdown">
+			<button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				<%=CommonController.getOrderStatusHTML(((Order) pageContext.getAttribute("order")).getStatus()) %>
+			</button>
+			
+			<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+			<%
+
+      		for (OrderStatus status: OrderStatus.values()) {
+      			out.print("<form  method=\"post\" action=\"/admin/set_order_status\">");
+      			out.print("<input type=\"hidden\" name=\"id\" value=" + ((Order) pageContext.getAttribute("order")).getId() + "></input>");
+      			out.print("<input type=\"hidden\" name=\"status\" value=" + status + "></input>");
+      			out.print("<button class=\"dropdown-item\" type=\"submit\">");
+      			out.print(CommonController.getOrderStatusHTML(status));
+      			out.print("</button>");
+      			out.print("</form>");
+      		}
+			%>
+            
+          </div>
+		</div>
+	</c:if>
+	<c:if test="${not isUserAdmin }">
+	<%=CommonController.getOrderStatusHTML(((Order) pageContext.getAttribute("order")).getStatus()) %>
+	</c:if>
+	</h4><br>
 <form>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Дата заказа</label>
@@ -62,7 +89,7 @@
 			<label for="exampleInputEmail1">Адрес доставки</label>
 			<textarea type="text" class="order-fc form-control" id="exampleInputEmail1"
 				aria-describedby="emailHelp"
-				placeholder="Введите полный почтовый адрес и индекс" cols="" rows=""><c:out value="${fn:escapeXml(order.address) }"></c:out></textarea> <!-- TODO use account -->
+				placeholder="Введите полный почтовый адрес и индекс" cols="" rows=""><c:out value="${fn:escapeXml(order.address) }"></c:out></textarea>
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Комментарий</label>

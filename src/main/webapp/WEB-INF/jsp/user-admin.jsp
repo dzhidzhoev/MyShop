@@ -22,7 +22,10 @@
 
 		<div class="col-sm-10">
 			<h1><c:out value="${user.email}"></c:out></h1>
-			&nbsp;<a href="orders.php">Его заказы</a> <!-- TODO -->
+			<c:url value="/admin/orders" var="url">
+				<c:param name="email"><c:out value="${user.email }"></c:out> </c:param>
+			</c:url>
+			&nbsp;<a href="${url }">Его заказы</a>
 		</div>
 	</div>
 	<div class="row">

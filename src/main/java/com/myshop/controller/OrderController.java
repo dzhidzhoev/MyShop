@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.myshop.model.Order;
 import com.myshop.model.OrderStatus;
+import com.myshop.repository.CartRepository;
+import com.myshop.repository.ItemRepository;
 import com.myshop.repository.OrderItemRepository;
 import com.myshop.repository.OrderRepository;
 import com.myshop.repository.UserRepository;
@@ -27,6 +29,8 @@ public class OrderController {
 	@Autowired CommonController common;
 	@Autowired OrderRepository orderRepo;
 	@Autowired UserRepository userRepo;
+	@Autowired CartRepository cartRepo;
+	@Autowired ItemRepository itemRepo;
 	@Autowired OrderItemRepository orderItemRepo;
 	@Autowired UserController userController;
 	
@@ -48,6 +52,15 @@ public class OrderController {
 	
 	private boolean hasOrderAccess(Order order) {
 		return common.isUserAdmin() || userController.getLoggedUserId() == order.getUser().getId(); 
+	}
+	
+	@PostMapping
+	public String placeOrder() {
+		var o = orderRepo.placeNewOrder(userController.getLoggedUser(), cartRepo, itemRepo, orderItemRepo);
+		if (o.getFirst().isEmpty()) {
+			return "redirect:/user/cart";
+		}
+		return "redirect:/user/order?id=" + o.getFirst().get().getId();
 	}
 	
 	@GetMapping("/user/order")
@@ -72,6 +85,17 @@ public class OrderController {
 					.setStatus(OrderStatus.Canceled);
 			orderRepo.saveAndFlush(order);
 		}
+		return "redirect:/user/order?id=" + id;
+	}
+	
+	@PostMapping("/admin/set_order_status")
+	public String setOrderStatus(@RequestParam int id, @RequestParam OrderStatus status) {
+		var orderAttempt = orderRepo.findById(id);
+		if (orderAttempt.isEmpty()) {
+			return "redirect:" + ADMIN_ORDERS_PATH;
+		}
+		var order = orderAttempt.get();
+		orderRepo.saveAndFlush(order.setStatus(status));
 		return "redirect:/user/order?id=" + id;
 	}
 }

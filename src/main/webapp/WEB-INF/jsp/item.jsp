@@ -58,7 +58,7 @@
 			<input type="hidden" name="count" id="count-form-input">
 			<input type="hidden" name="itemId" value="${item.id }" >
 		</form>
-		<button onclick="$('#count-form-input').val(parseInt($('#item-counter').text())); $('#add-to-cart-form').submit();" class="btn btn-primary">В корзину!</button><br> <!-- TODO -->
+		<button onclick="$('#count-form-input').val(parseInt($('#item-counter').text())); $('#add-to-cart-form').submit();" class="btn btn-primary">В корзину!</button><br>
 	</c:if>
 	
 	<c:if test="${isUserAdmin }">
