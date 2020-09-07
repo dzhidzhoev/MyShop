@@ -1,5 +1,6 @@
 package com.myshop.pages;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.util.Optional;
 
@@ -29,6 +30,8 @@ public class EditItemPage extends GeneralPage {
 	private WebElement description;
 	@FindBy(css = "#update-item-button")
 	private WebElement updateButton;
+	@FindBy(css = "#edit-traits-button")
+	private WebElement editTraitsButton;
 	@FindBy(css = "#view-item-link")
 	private WebElement viewItemButton;
 	@FindBy(css = "#customFile")
@@ -44,7 +47,7 @@ public class EditItemPage extends GeneralPage {
 		return errorMessage.getText();
 	}
 	
-	public GeneralPage viewItem(PagePathsDispatcher ppd) throws MalformedURLException {
+	public GeneralPage viewItem() throws MalformedURLException {
 		viewItemButton.click();
 		return ppd.openPage();
 	}
@@ -66,5 +69,25 @@ public class EditItemPage extends GeneralPage {
 		imagePath.ifPresent(img -> itemImageChooser.sendKeys(img));
 		updateButton.click();
 		return ppd.openPage();
+	}
+	
+	public GeneralPage editTraits() {
+		editTraitsButton.click();
+		GeneralPage page;
+		try {
+			page = ppd.setupPage(EditItemTraitPage.class);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+			throw new TraitEditingException("unable to instantiate page class!");
+		}
+		return page;
+	}
+	
+	@SuppressWarnings("serial")
+	public static class TraitEditingException extends RuntimeException {
+		public TraitEditingException(String msg) {
+			super(msg);
+		}
 	}
 }

@@ -101,7 +101,6 @@ public class Item {
 	
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
 		if (obj instanceof Item) {
 			return ((Item)obj).id == id;
 		}
@@ -110,7 +109,6 @@ public class Item {
 	
 	@Override
 	public int hashCode() {
-		// TODO Auto-generated method stub
 		return (int) id;
 	}
 }

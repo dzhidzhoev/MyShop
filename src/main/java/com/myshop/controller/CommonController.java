@@ -45,7 +45,7 @@ public class CommonController {
 		case Canceled:
 			return "Отменён";
 		case Delivery:
-			return "В доставке";
+			return "Идёт доставка";
 		case Done:
 			return "Завершён";
 		case Processing:

@@ -1,3 +1,4 @@
+<%@page import="com.myshop.controller.OrderController"%>
 <%@page import="com.myshop.controller.UserController"%>
 <%@page import="com.myshop.controller.TraitController"%>
 <%@page import="com.myshop.controller.CategoryController"%>
@@ -21,7 +22,7 @@
 <c:if test="${isUserAdmin}">
 <div class="row bg-light">
 <div class="col m-1 text-right">
-<a href="orders.php">Заказы</a>&nbsp;
+<a href="<%=OrderController.ADMIN_ORDERS_PATH%>">Заказы</a>&nbsp;
 </div>
 <div class="col m-1 text-center">
 <a href="<%=UserController.ADMIN_USERS_PATH%>">Пользователи</a>

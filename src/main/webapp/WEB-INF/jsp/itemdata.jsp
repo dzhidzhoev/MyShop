@@ -140,7 +140,7 @@ return base64
 		<form:button class="btn btn-success" id="update-item-button">Обновить</form:button>
 	</div>
 	<div class="form-group">
-		<button type="button" class="btn btn-primary" onclick="editTraits()">Редактировать свойства</button>
+		<button type="button" class="btn btn-primary" id="edit-traits-button" onclick="editTraits()">Редактировать свойства</button>
 	</div>
 	<div class="form-group">
 		<a id="view-item-link" href="/item?id=${item.id }">Просмотр</a>

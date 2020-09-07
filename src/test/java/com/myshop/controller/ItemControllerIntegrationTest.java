@@ -6,6 +6,7 @@ import static org.testng.Assert.assertTrue;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
@@ -17,12 +18,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.io.Resource;
+import org.springframework.data.util.Pair;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.annotations.Test;
 
 import com.myshop.MyShopApplication;
 import com.myshop.pages.EditItemPage;
+import com.myshop.pages.EditItemTraitPage;
+import com.myshop.pages.ItemPage;
 import com.myshop.pages.LoginPage;
 import com.myshop.pages.PagePathsDispatcher;
 import com.myshop.pages.ProfilePage;
@@ -45,6 +49,7 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 	public void init() {
 		driver = new HtmlUnitDriver();
 		driver.setJavascriptEnabled(true);
+		driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
 		ppd = new PagePathsDispatcher(driver, driver, port);
 	}
 	
@@ -109,5 +114,34 @@ public class ItemControllerIntegrationTest extends AbstractTestNGSpringContextTe
 				assertEquals(itemRepo.findById(editPage.getId()).isPresent(), false);
 			}
 		}
+	}
+	
+	@Test
+	public void itemTraitTest() throws MalformedURLException {
+		loginAdmin();
+		
+		EditItemTraitPage pg;
+		// integer
+		pg = (EditItemTraitPage) ((EditItemPage) ItemPage.to(ppd, 1).edit()).editTraits();
+		assertEquals(pg.getTraitValue(3), "50");
+		pg = ((EditItemTraitPage) ((EditItemPage) pg.updateTraits(Pair.of(3, "60"))).editTraits());
+		assertEquals(pg.getTraitValue(3), "60");
+		pg = ((EditItemTraitPage) ((EditItemPage) pg.updateTraits(Pair.of(3, "50"))).editTraits());
+		assertEquals(pg.getTraitValue(3), "50");
+		// string
+		pg = (EditItemTraitPage) ((EditItemPage) ItemPage.to(ppd, 1).edit()).editTraits();
+		assertEquals(pg.getTraitValue(1), "Me");
+		pg = ((EditItemTraitPage) ((EditItemPage) pg.updateTraits(Pair.of(1, "Me2"))).editTraits());
+		assertEquals(pg.getTraitValue(1), "Me2");
+		pg = ((EditItemTraitPage) ((EditItemPage) pg.updateTraits(Pair.of(1, "Me"))).editTraits());
+		assertEquals(pg.getTraitValue(1), "Me");
+		
+		// enum
+		pg = (EditItemTraitPage) ((EditItemPage) ItemPage.to(ppd, 3).edit()).editTraits();
+		assertEquals(pg.getTraitValue(6), "Bluray");
+		pg = ((EditItemTraitPage) ((EditItemPage) pg.updateTraits(Pair.of(6, "DVD"))).editTraits());
+		assertEquals(pg.getTraitValue(6), "DVD");
+		pg = ((EditItemTraitPage) ((EditItemPage) pg.updateTraits(Pair.of(6, "Bluray"))).editTraits());
+		assertEquals(pg.getTraitValue(6), "Bluray");
 	}
 }

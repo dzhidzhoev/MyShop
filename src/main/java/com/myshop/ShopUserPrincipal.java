@@ -54,7 +54,6 @@ public class ShopUserPrincipal implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 

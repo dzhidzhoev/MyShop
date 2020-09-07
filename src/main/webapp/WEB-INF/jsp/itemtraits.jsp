@@ -38,7 +38,7 @@
 </div>
 <div class="modal-footer">
 	<button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-	<input type="button" class="btn btn-primary" onclick="updateTraitValues()" value="Обновить" />
+	<input type="button" id="submit-traits-button" class="btn btn-primary" onclick="updateTraitValues()" value="Обновить" />
 </div>
 </form>
 <form id="submit-form" method="post" action="/admin/edit_item_traits">
@@ -58,7 +58,7 @@ function updateTraitValues() {
 		} else if (traitType == 'StringType') {
 			trait.value = $(item).find('.value').val();
 		} else if (traitType === 'IntType') {
-			valInt = $(item).find('.valueInt').val();
+			var valInt = $(item).find('.valueInt').val();
 			trait.valueInt = (valInt == '' ? null : valInt);
 		}
 		res.push(trait);

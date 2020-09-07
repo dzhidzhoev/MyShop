@@ -69,14 +69,19 @@ public class PagePathsDispatcher {
 		var url = new URL(driver.getCurrentUrl());
 		var path = url.getPath();
 		try {
-			GeneralPage page = holder.containsKey(path) ? holder.get(path).getConstructor().newInstance() : new GeneralPage();
-			page.setDispatcher(this);
+			GeneralPage page = holder.containsKey(path) ? setupPage(holder.get(path)) : new GeneralPage();
 			return page;
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
 				| NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 			throw new InvalidPageClassException();
 		}
+	}
+
+	public GeneralPage setupPage(Class<? extends GeneralPage> pageClazz) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		var page = pageClazz.getConstructor().newInstance();
+		page.setDispatcher(this);
+		return page;
 	}
 
 	public void setJavascriptEnabled(boolean isEnabled) {
