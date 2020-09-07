@@ -51,35 +51,30 @@
 	<%=CommonController.getOrderStatusHTML(((Order) pageContext.getAttribute("order")).getStatus()) %>
 	</c:if>
 	</h4><br>
-<form>
+<form method="/user/update_order">
+	<input type="hiddent" name="id" value="${order.id }" />
 		<div class="form-group">
 			<label for="exampleInputEmail1">Дата заказа</label>
 			<br>${order.orderTime }
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Получатель</label> <input
-				type="text" class="order-fc form-control" id="exampleInputEmail1"
-				aria-describedby="emailHelp" placeholder="Введите ФИО" value="${fn:escapeXml(order.name) }"> <small
-				id="emailHelp" class="form-text text-muted"><a class="order-fc" href="#">Использовать
-					данные аккаунта</a></small>
+				type="text" name="name" class="order-fc form-control" id="exampleInputEmail1"
+				aria-describedby="emailHelp" placeholder="Введите ФИО" value="${fn:escapeXml(order.name) }">
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Номер телефона получателя</label> <input
-				type="text" class="order-fc form-control" id="exampleInputEmail1"
-				aria-describedby="emailHelp" placeholder="Введите номер" value="${fn:escapeXml(order.phone) }"> <small
-				id="tel" class="form-text text-muted"><a class="order-fc" href="#">Использовать
-					данные аккаунта</a></small>
+				type="text" name="phone" class="order-fc form-control" id="exampleInputEmail1"
+				aria-describedby="emailHelp" placeholder="Введите номер" value="${fn:escapeXml(order.phone) }">
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Почта получателя</label> <input
-				type="email" class="order-fc form-control" id="exampleInputEmail1"
-				aria-describedby="emailHelp" placeholder="Введите email-адрес" value="${fn:escapeXml(order.email) }"> <small
-				id="emailHelp" class="form-text text-muted"><a class="order-fc" href="#">Использовать
-					данные аккаунта</a></small>
+				type="email" name="email" class="order-fc form-control" id="exampleInputEmail1"
+				aria-describedby="emailHelp" placeholder="Введите email-адрес" value="${fn:escapeXml(order.email) }"> 
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Время доставки</label> <input
-				type="text" class="order-fc form-control" id="exampleInputEmail1"
+				type="text" name="time" class="order-fc form-control" id="exampleInputEmail1"
 				aria-describedby="emailHelp"
 				placeholder="Введите предпочитаемое время и дату" value="${fn:escapeXml(order.deliveryTime) }"> <small class="order-fc"
 				id="emailHelp" class="form-text text-muted">Оставьте пустым, если
@@ -87,13 +82,13 @@
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Адрес доставки</label>
-			<textarea type="text" class="order-fc form-control" id="exampleInputEmail1"
+			<textarea type="text" name="address" class="order-fc form-control" id="exampleInputEmail1"
 				aria-describedby="emailHelp"
 				placeholder="Введите полный почтовый адрес и индекс" cols="" rows=""><c:out value="${fn:escapeXml(order.address) }"></c:out></textarea>
 		</div>
 		<div class="form-group">
 			<label for="exampleInputEmail1">Комментарий</label>
-			<textarea type="text" class="order-fc form-control" id="exampleInputEmail1"
+			<textarea type="text" name="comment" class="order-fc form-control" id="exampleInputEmail1"
 				aria-describedby="emailHelp" placeholder="Любые Ваши пожелания"
 				cols="" rows=""><c:out value="${fn:escapeXml(order.comment) }"></c:out> </textarea>
 		</div>
@@ -124,13 +119,14 @@
 				</tbody>
 			</table>
 		</div>
-
+<!-- 
 	<script>
 		$('.order-fc').attr('readonly', true);
 		$('.order-fc').attr('placeholder', '');
 		$('a.order-fc').remove();
 		$('small.order-fc').remove();
-	</script>
+	</script> -->
+		<button class="btn btn-success" type="submit">Обновить</button>
 	</form>
 	
 	<form method="post" action="/user/cancel">

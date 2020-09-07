@@ -76,7 +76,7 @@
 <h2>Итого:<br>
 <%=price %>₽<br>
 </h2>
-<form action="order.php"> <!-- TODO -->
+<form action="/user/place_order" method="post">
 <button class="btn btn-success" type="submit"><h3>Заказать!</h3></button>
 </form>
 </div>

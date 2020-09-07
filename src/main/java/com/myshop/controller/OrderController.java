@@ -54,11 +54,11 @@ public class OrderController {
 		return common.isUserAdmin() || userController.getLoggedUserId() == order.getUser().getId(); 
 	}
 	
-	@PostMapping
+	@PostMapping("/user/place_order")
 	public String placeOrder() {
 		var o = orderRepo.placeNewOrder(userController.getLoggedUser(), cartRepo, itemRepo, orderItemRepo);
 		if (o.getFirst().isEmpty()) {
-			return "redirect:/user/cart";
+			return "redirect:/user/cart?errorMessage=" + o.getSecond();
 		}
 		return "redirect:/user/order?id=" + o.getFirst().get().getId();
 	}
@@ -73,6 +73,17 @@ public class OrderController {
 		model.addAttribute("order", order);
 		model.addAttribute("items", orderItemRepo.findByOrderId(order.getId()));
 		return "order";
+	}
+	
+	@PostMapping("/user/update_order")
+	public String updateOrder(@RequestParam int id, String name, String address, String phone, String email, String time, String comment) {
+		var order = orderRepo.findById(id).get();
+		if (!hasOrderAccess(order)) {
+			return "redirect:/profile";
+		}
+		order.setAddress(address).setEmail(email).setName(name).setPhone(phone).setDeliveryTime(time).setComment(comment);
+		orderRepo.saveAndFlush(order);
+		return "redirect:/user/order?id=" + id;
 	}
 	
 	@PostMapping("/user/cancel")
