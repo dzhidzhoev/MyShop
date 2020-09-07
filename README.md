@@ -14,12 +14,12 @@ CMS for online shop
 
 Предварительно необходимо указать параметры подключения к БД в файлах `build.properties`, `src/test/resources/test.properties`, `src/test/resources/test_validate.properties`, `src/main/resources/application.properties`.
 В параметрах тестов нужно указывать название БД для запуска юнит-тестов, в параметрах приложения - название 
-основной БД для запуска. Для запуска тестов нужно создать схему и заполнить БД с помощью Ant-задач `create`, `fill` (либо выполнив файлы `src/test/resources/schema.sql`, `src/test/resources/data.sql`).
+основной БД для запуска. Для запуска тестов нужно создать схему и заполнить БД с помощью Ant-задач `create`, `fill` (либо выполнив файлы `src/test/resources/schema.sql`, `src/test/resources/data.sql`). Также, для доступа к функции регистрации пользователей, необходимо прописать настройки почтового сервера в `src/main/resources/application.properties`.
 
 Для работы используется СУБД PostgreSQL.
 
 ## Функционирование
-Код использует Spring и Spring Data. Юнит-тесты написаны с помощью фреймворка TestNG. 
+Код использует Spring и Spring Data. Юнит-тесты написаны с помощью фреймворка TestNG. Интеграционные тесты написаны с использованием Selenium HttpUnit.
 
 Для взаимодействия с БД используется механизм, описываемый спецификацией JPA, при этом 
 используется реализация Hibernate.
